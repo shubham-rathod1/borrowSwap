@@ -22,7 +22,7 @@ contract Swap {
         uint256 _amountIn,
         uint24 swapFee0,
         uint24 swapFee1
-    ) internal {
+    ) external {
         TransferHelper.safeApprove(tokenIn, address(swapRouter), _amountIn);
 
         ISwapRouter.ExactInputParams memory params = ISwapRouter
