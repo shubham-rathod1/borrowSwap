@@ -1,0 +1,145 @@
+{
+	"deploy": {
+		"VM:-": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"main:1": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"ropsten:3": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"rinkeby:4": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"kovan:42": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"goerli:5": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"Custom": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		}
+	},
+	"data": {
+		"bytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"deployedBytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"immutableReferences": {},
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"gasEstimates": null,
+		"methodIdentifiers": {
+			"borrow(address,int256,uint256,address)": "8dee9460",
+			"redeemUnderlying(uint256,int256,address)": "99cd69d1",
+			"repay(address,int256,address)": "82626547"
+		}
+	},
+	"abi": [
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_pool",
+					"type": "address"
+				},
+				{
+					"internalType": "int256",
+					"name": "_amount",
+					"type": "int256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_collateral_amount",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address payable",
+					"name": "_recipient",
+					"type": "address"
+				}
+			],
+			"name": "borrow",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_nftID",
+					"type": "uint256"
+				},
+				{
+					"internalType": "int256",
+					"name": "amount",
+					"type": "int256"
+				},
+				{
+					"internalType": "address",
+					"name": "_receiver",
+					"type": "address"
+				}
+			],
+			"name": "redeemUnderlying",
+			"outputs": [
+				{
+					"internalType": "int256",
+					"name": "",
+					"type": "int256"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_pool",
+					"type": "address"
+				},
+				{
+					"internalType": "int256",
+					"name": "_amount",
+					"type": "int256"
+				},
+				{
+					"internalType": "address",
+					"name": "_for",
+					"type": "address"
+				}
+			],
+			"name": "repay",
+			"outputs": [
+				{
+					"internalType": "int256",
+					"name": "",
+					"type": "int256"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	]
+}

@@ -13,6 +13,33 @@ interface ILogic {
         uint _borrowAmount,
         address user
     ) external;
+    function InitBorrow(
+        address _pool,
+        address _supplyAsset,
+        address _tokenOUt,
+        address _borrowToken,
+        uint256 _collateral_amount,
+        int256 _amount,
+        address _user
+    ) external;
+    function repayBorrow(
+        address _pool,
+        address _tokenIn,
+        address _borrowedToken,
+        address _user,
+        uint256 _nftID,
+        int256 _amountOut,
+        int256 _repayAmount
+    ) external returns (int256);
+
+    function compRepay(
+        address _borrowedToken,
+        address _tokenIn,
+        address _user,
+        address _collateralToken,
+        uint256 _collateralAmount,
+        uint256 _repayAmount
+    ) external;
 }
 
 contract Controller {
@@ -66,7 +93,7 @@ contract Controller {
         }
         // safe transfer from user to logic contract
         address contractAddress = proxyAddress[msg.sender];
-        console.log(contractAddress, "contract user address");
+        console.log(contractAddress, "contract user address", msg.sender);
         TransferHelper.safeTransferFrom(
             _supplyAsset,
             msg.sender,
@@ -81,6 +108,95 @@ contract Controller {
             _supplyAmount,
             _borrowAmount,
             _user
+        );
+    }
+
+    function uniBorrow(
+        address _pool,
+        address _supplyAsset,
+        address _tokenOUt,
+        address _borrowToken,
+        uint256 _collateral_amount,
+        int256 _amount,
+        address _user
+    ) external {
+        if (proxyAddress[msg.sender] == address(0)) {
+            createAccount();
+        }
+        address contractAddress = proxyAddress[msg.sender];
+        TransferHelper.safeTransferFrom(
+            _supplyAsset,
+            msg.sender,
+            contractAddress,
+            _collateral_amount
+        );
+        ILogic(contractAddress).InitBorrow(
+            _pool,
+            _supplyAsset,
+            _tokenOUt,
+            _borrowToken,
+            _collateral_amount,
+            _amount,
+            _user
+        );
+    }
+
+    function uniRepay(
+        address _pool,
+        address _tokenIn,
+        address _borrowedToken,
+        address _user,
+        uint256 _nftID,
+        int256 _amountOut,
+        int256 _repayAmount
+    ) external {
+        if (proxyAddress[msg.sender] == address(0)) {
+            createAccount();
+        }
+        address contractAddress = proxyAddress[msg.sender];
+        TransferHelper.safeTransferFrom(
+            _tokenIn,
+            msg.sender,
+            contractAddress,
+            uint256(_repayAmount)
+        );
+        ILogic(contractAddress).repayBorrow(
+            _pool,
+            _tokenIn,
+            _borrowedToken,
+            _user,
+            _nftID,
+            _amountOut,
+            _repayAmount
+        );
+    }
+    function reapay(
+        address _borrowedToken,
+        address _tokenIn,
+        address _user,
+        address _collateralToken,
+        uint256 _collateralAmount,
+        uint256 _repayAmount
+    ) external {
+        // if (proxyAddress[msg.sender] == address(0)) {
+        //     createAccount();
+        // }
+        address contractAddress = proxyAddress[msg.sender];
+        // add require condition here for checking contract address;
+        TransferHelper.safeTransferFrom(
+            _tokenIn,
+            msg.sender,
+            contractAddress,
+            _repayAmount
+        );
+
+        ILogic(contractAddress).compRepay(
+            _borrowedToken,
+            _tokenIn,
+            _user,
+            _collateralToken,
+            _collateralAmount,
+            _repayAmount
         );
     }
 }

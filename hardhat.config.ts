@@ -16,7 +16,8 @@ const config: HardhatUserConfig = {
   },
   networks: {
     buildbear: {
-      url: 'https://rpc.buildbear.io/powerful-vision-50dcd8b1',
+      // url: 'https://rpc.buildbear.io/dual-carnage-effb3e55',
+      url: 'https://rpc.buildbear.io/honest-spiderwoman-6c6fbc8e',
       accounts: [process.env.WALLET_SECRET || ''],
     },
     hardhat: {
@@ -33,12 +34,11 @@ const config: HardhatUserConfig = {
     customChains: [
       {
         network: 'buildbear',
-        chainId: 15809,
+        chainId: 16153,
         urls: {
-          apiURL:
-            'https://rpc.buildbear.io/verify/etherscan/powerful-vision-50dcd8b1',
-          browserURL:
-            'https://explorer.buildbear.io/powerful-vision-50dcd8b1',
+          // apiURL: 'https://rpc.buildbear.io/dual-carnage-effb3e55',
+          apiURL: 'https://rpc.buildbear.io/honest-spiderwoman-6c6fbc8e',
+          browserURL: 'https://explorer.buildbear.io/dual-carnage-effb3e55',
         },
       },
     ],

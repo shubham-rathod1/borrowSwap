@@ -18,8 +18,8 @@ async function main() {
 
   console.log('borrowSwap contract deployed at:', borrowSwap.target);
   console.log('controller contract deployed at:', controller.target);
-  let addresses = await controller.proxyAddress(owner.address.toString());
-  console.log(addresses, 'contract address mapping');
+  // let addresses = await controller.proxyAddress(`${owner.address}`);
+  // console.log(addresses, 'contract address mapping');
 
   const comet = await ethers.getContractAt(
     cometAbi,
@@ -28,15 +28,15 @@ async function main() {
 
   // setting approval
 
-  // const Curv = await ethers.getContractAt(
-  //   ERC20Abi,
-  //   '0x172370d5cd63279efa6d502dab29171933a610af'
-  // );
+  const Curv = await ethers.getContractAt(
+    ERC20Abi,
+    '0x172370d5cd63279efa6d502dab29171933a610af'
+  );
 
-  // const Sushi = await ethers.getContractAt(
-  //   ERC20Abi,
-  //   '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a'
-  // );
+  const Sushi = await ethers.getContractAt(
+    ERC20Abi,
+    '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a'
+  );
 
   const WETH = await ethers.getContractAt(
     ERC20Abi,
@@ -51,17 +51,20 @@ async function main() {
     '0xc2132d05d31c914a87c6611c10748aeb04b58e8f'
   );
 
-  await WETH.approve(controller.target, '100000000000000000000');
+  await WETH.approve(controller.target, '1000000000000000000000000');
 
-  // await Sushi.approve(borrowSwap.target, '100000000000000000000');
+  await Sushi.approve(controller.target, '100000000000000000000000');
+  await Curv.approve(controller.target, '1000000000000000000000000');
+  await USDCe.approve(controller.target, '100000000000');
 
   // console.log("tokens approved",owner.address);
 
-  console.log(
-    'approval given - WETH',
-    await WETH.allowance(owner.address, controller.target)
-    // await Sushi.allowance(owner.address, borrowSwap.target)
-  );
+  // console.log(
+  //   'approval given - WETH',
+  //   await Sushi.allowance(owner.address, controller.target),
+  //   await Curv.allowance(owner.address, controller.target)
+  //   // await Sushi.allowance(owner.address, borrowSwap.target)
+  // );
 
   // console.log(
   //   'balance of curv, sushi',
@@ -69,33 +72,50 @@ async function main() {
   //   // await Sushi.balanceOf(owner.address)
   // );
 
-  // await borrowSwap.compBorrow(
+  // await controller.compoundBorrow(
   //   '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
   //   '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-  //   '1000000000000000000',
+  //   '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
+  //   '500000000000000000',
+  //   '200000000',
+  //   owner.address
+  // );
+
+  // console.log('borrowed successfully');
+
+  // await controller.reapay(
+  //   '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+  //   '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+  //   // '0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a',
+  //   owner.address,
+  //   '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
+  //   '400000000000000000',
   //   '200000000'
   // );
 
-  await controller.compoundBorrow(
-    '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
-    '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-    '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
-    '1000000000000000000',
-    '200000000',
-    owner.address
-  );
+  // console.log(address, "my contract address");
+
+  // await controller.uniBorrow(
+  //   '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
+  //   '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a',
+  //   '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+  //   '0x172370d5cd63279efa6d502dab29171933a610af',
+  //   '10000000000000000000',
+  //   '200000000000000',
+  //   owner.address
+  // );
 
   // const balance = await comet.collateralBalanceOf(
   //   addresses,
   //   '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'
   // );
 
-  const contractBalance = await comet.collateralBalanceOf(
-    addresses,
-    '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'
-  );
+  // const contractBalance = await comet.collateralBalanceOf(
+  //   addresses,
+  //   '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'
+  // );
 
-  console.log('collateral balance of user', contractBalance);
+  // console.log('collateral balance of user', contractBalance);
   console.log(
     'user balance of borrowAsset',
     await USDT.balanceOf(owner.address)

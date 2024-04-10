@@ -86,22 +86,16 @@ contract BorrowSwap {
 
     function InitBorrow(
         address _pool,
-        address _tokenIn,
+        address _supplyAsset,
         address _tokenOUt,
         address _borrowToken,
         uint256 _collateral_amount,
-        int256 _amount
+        int256 _amount,
+        address _user
     ) external {
-        // get asset from user
-        TransferHelper.safeTransferFrom(
-            _tokenIn,
-            msg.sender,
-            address(this),
-            _collateral_amount
-        );
         // approve lending protocol
         TransferHelper.safeApprove(
-            _tokenIn,
+            _supplyAsset,
             address(unilendCore),
             _collateral_amount
         );
@@ -110,30 +104,17 @@ contract BorrowSwap {
             _pool,
             _amount,
             _collateral_amount,
-            payable(msg.sender)
+            payable(address(this))
         );
 
         if (_amount < 0) _amount = -_amount;
 
-        // check assets on user address
-        require(
-            IERC20(_borrowToken).balanceOf(msg.sender) >= uint256(_amount),
-            "borrowed failed"
-        );
-
         emit Borrowed(_borrowToken, msg.sender, _amount, block.timestamp);
-        // get borrow asset from user for swaping
-        TransferHelper.safeTransferFrom(
-            _borrowToken,
-            msg.sender,
-            address(this),
-            uint256(_amount)
-        );
-        // swap borrowed asset for tokenOut
+
         exactInputSwap(
             _borrowToken,
             _tokenOUt,
-            msg.sender,
+            _user,
             uint256(_amount),
             3000,
             10000
@@ -158,15 +139,9 @@ contract BorrowSwap {
             address(cometAddress),
             _supplyAmount
         );
-
-        //  Supply an asset that this contract holds to Compound III
-
-        // IERC20(_supplyAsset).approve(address(cometAddress), _supplyAmount);
         cometAddress.supplyTo(address(this), _supplyAsset, _supplyAmount);
-        // require(cometAddress.collateralBalanceOf(msg.sender,0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619) > 0,"user supply failed");
         //  Borrow as asset from Comopound III
         cometAddress.withdrawTo(address(this), _borrowAsset, _borrowAmount);
-
         // swap borrowed asset for tokenOut
         exactInputSwap(
             _borrowAsset,
@@ -178,35 +153,61 @@ contract BorrowSwap {
         );
     }
 
+    function compRepay(
+        address _borrowedToken,
+        address _tokenIn,
+        address _user,
+        address _collateralToken,
+        uint256 _collateralAmount,
+        uint256 _repayAmount
+    ) external {
+        if (_borrowedToken != _tokenIn) {
+            // if (_repayAmount < 0) repayAmount = -_repayAmount;
+            exctOutputSwap(
+                _tokenIn,
+                _borrowedToken,
+                _user,
+                uint256(_repayAmount),
+                3000,
+                10000
+            );
+        }
+        TransferHelper.safeApprove(
+            _borrowedToken,
+            address(cometAddress),
+            type(uint256).max
+        );
+
+        cometAddress.supplyTo(address(this), _borrowedToken, _repayAmount);
+        //  Borrow as asset from Comopound III
+        cometAddress.withdrawTo(_user, _collateralToken, _collateralAmount);
+    }
+
     function repayBorrow(
         address _pool,
         address _tokenIn,
         address _borrowedToken,
-        int256 _amount,
-        uint256 _nftID
-    ) external {
-        // take token to swap from user
-        TransferHelper.safeTransferFrom(
-            _tokenIn,
-            msg.sender,
-            address(this),
-            uint(_amount)
-        );
+        address _user,
+        uint256 _nftID,
+        int256 _amountOut,
+        int256 _repayAmount
+    ) external returns (int256 repayAmount) {
         // swap for borrowed token
         if (_borrowedToken != _tokenIn) {
+            if (_repayAmount < 0) repayAmount = -_repayAmount;
             exctOutputSwap(
                 _tokenIn,
                 _borrowedToken,
-                msg.sender,
-                uint256(_amount),
+                _user,
+                uint256(repayAmount),
                 3000,
                 10000
             );
         }
         // reapay borrowed token
-        unilendCore.repay(_pool, _amount, msg.sender);
+        unilendCore.repay(_pool, _repayAmount, _user);
         // redeem lend tokens to user
-        unilendCore.redeemUnderlying(_nftID, _amount, msg.sender);
+        unilendCore.redeemUnderlying(_nftID, _amountOut, _user);
     }
 
     function exactInputSwap(
@@ -246,7 +247,11 @@ contract BorrowSwap {
         uint24 swapFee0,
         uint24 swapFee1
     ) internal {
-        TransferHelper.safeApprove(tokenIn, address(swapRouter), _amountIn);
+        TransferHelper.safeApprove(
+            tokenIn,
+            address(swapRouter),
+            type(uint256).max
+        );
 
         ISwapRouter.ExactOutputParams memory params = ISwapRouter
             .ExactOutputParams({

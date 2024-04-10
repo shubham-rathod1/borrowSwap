@@ -1,0 +1,228 @@
+{
+	"deploy": {
+		"VM:-": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"main:1": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"ropsten:3": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"rinkeby:4": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"kovan:42": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"goerli:5": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"Custom": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		}
+	},
+	"data": {
+		"bytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"deployedBytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"immutableReferences": {},
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"gasEstimates": null,
+		"methodIdentifiers": {
+			"InitBorrow(address,address,address,address,uint256,int256,address)": "8f558189",
+			"compBorrow(address,address,address,uint256,uint256,address)": "a6d7f530",
+			"compRepay(address,address,address,address,uint256,uint256)": "501f5dbe",
+			"repayBorrow(address,address,address,address,uint256,int256,int256)": "de63a935"
+		}
+	},
+	"abi": [
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_pool",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_supplyAsset",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_tokenOUt",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_borrowToken",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_collateral_amount",
+					"type": "uint256"
+				},
+				{
+					"internalType": "int256",
+					"name": "_amount",
+					"type": "int256"
+				},
+				{
+					"internalType": "address",
+					"name": "_user",
+					"type": "address"
+				}
+			],
+			"name": "InitBorrow",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_supplyAsset",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_borrowAsset",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_tokenOut",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_supplyAmount",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_borrowAmount",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "user",
+					"type": "address"
+				}
+			],
+			"name": "compBorrow",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_borrowedToken",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_tokenIn",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_user",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_collateralToken",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_collateralAmount",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_repayAmount",
+					"type": "uint256"
+				}
+			],
+			"name": "compRepay",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_pool",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_tokenIn",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_borrowedToken",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_user",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_nftID",
+					"type": "uint256"
+				},
+				{
+					"internalType": "int256",
+					"name": "_amountOut",
+					"type": "int256"
+				},
+				{
+					"internalType": "int256",
+					"name": "_repayAmount",
+					"type": "int256"
+				}
+			],
+			"name": "repayBorrow",
+			"outputs": [
+				{
+					"internalType": "int256",
+					"name": "",
+					"type": "int256"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	]
+}
