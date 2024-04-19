@@ -16,6 +16,8 @@ async function main() {
   ]);
   await controller.waitForDeployment();
 
+  // const controller = await ethers.getContractAt('Controller',"0xE53837C4df9B866d5Dee0E1CC42CEa8B096B4918");
+
   console.log('borrowSwap contract deployed at:', borrowSwap.target);
   console.log('controller contract deployed at:', controller.target);
   // let addresses = await controller.proxyAddress(`${owner.address}`);
@@ -23,43 +25,48 @@ async function main() {
 
   const comet = await ethers.getContractAt(
     cometAbi,
-    '0xF25212E676D1F7F89Cd72fFEe66158f541246445'
+    '0x9c4ec768c28520B50860ea7a15bd7213a9fF58bf'
   );
 
   // setting approval
 
   const Curv = await ethers.getContractAt(
     ERC20Abi,
-    '0x172370d5cd63279efa6d502dab29171933a610af'
+    '0x11cdb42b0eb46d95f990bedd4695a6e3fa034978'
   );
 
   const Sushi = await ethers.getContractAt(
     ERC20Abi,
-    '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a'
+    '0xd4d42f0b6def4ce0383636770ef773390d85c61a'
   );
 
   const WETH = await ethers.getContractAt(
     ERC20Abi,
-    '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'
+    '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1'
   );
-  const USDCe = await ethers.getContractAt(
+  const USDC = await ethers.getContractAt(
     ERC20Abi,
-    '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174'
+    '0xaf88d065e77c8cc2239327c5edb3a432268e5831'
   );
   const USDT = await ethers.getContractAt(
     ERC20Abi,
-    '0xc2132d05d31c914a87c6611c10748aeb04b58e8f'
+    '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9'
   );
   const WBTC = await ethers.getContractAt(
     ERC20Abi,
-    '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6'
+    '0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f'
+  );
+
+  const ARB = await ethers.getContractAt(
+    ERC20Abi,
+    '0x912ce59144191c1204e64559fe8253a0e49e6548'
   );
 
   await WETH.approve(controller.target, '1000000000000000000000000');
 
   await Sushi.approve(controller.target, '100000000000000000000000');
   await Curv.approve(controller.target, '1000000000000000000000000');
-  await USDCe.approve(controller.target, '100000000000');
+  await USDC.approve(controller.target, '100000000000');
   await USDT.approve(controller.target, '300000000000000');
   await WBTC.approve(controller.target, '1000000000000000000000000');
 
@@ -88,7 +95,7 @@ async function main() {
   // );
 
   // console.log('borrowed successfully');
-  
+
   // await controller.compoundBorrow(
   //   '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6',
   //   '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
@@ -111,26 +118,27 @@ async function main() {
   // );
   // console.log(address, "my contract address");
 
-  await controller.uniBorrow(
-    '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
-    '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a',
-    '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-    '0x172370d5cd63279efa6d502dab29171933a610af',
-    '100000000000000000',
-    '20000000000000000',
-    owner.address
-  );
+  // await controller.uniBorrow(
+  //   '0x3a1f9b5d99917ca02be377b9670b61935a78cfc2', // pool
+  //   '0x11cdb42b0eb46d95f990bedd4695a6e3fa034978', //supplyAsset
+  //   '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9', // tokenout
+  //   '0xd4d42f0b6def4ce0383636770ef773390d85c61a', // borrowToken
+  //   '10000000000000000000',                         // collateral amount
+  //   '2000000000000000000',                          // amount
+  //   owner.address
+  // );
 
-  console.log("borrowed");
+  // console.log('borrowed');
 
   await controller.uniRepay(
-    '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
-    '0x172370d5cd63279efa6d502dab29171933a610af',
-    '0x172370d5cd63279efa6d502dab29171933a610af',
-    owner.address,
-    1,
-    '1000000000000000000',
-    '10000000'
+    '0x3a1f9b5d99917ca02be377b9670b61935a78cfc2', // pool
+    '0xd4d42f0b6def4ce0383636770ef773390d85c61a', // tokenIn
+    '0xd4d42f0b6def4ce0383636770ef773390d85c61a', // borrowedToken
+    // owner.address,
+    '0x99A221a87b3C2238C90650fa9BE0F11e4c499D06',
+    // 2, // positionId
+    '1000000000000000000', // amountOut
+    '1550000000000000000' // repayAmount
   );
 
   // const balance = await comet.collateralBalanceOf(

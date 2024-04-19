@@ -16,8 +16,7 @@ const config: HardhatUserConfig = {
   },
   networks: {
     buildbear: {
-      // url: 'https://rpc.buildbear.io/dual-carnage-effb3e55',
-      url: 'https://rpc.buildbear.io/purring-magik-d55eb717',
+      url: 'https://rpc.buildbear.io/curved-kingpin-888be07c',
       // url: 'https://rpc.buildbear.io/honest-spiderwoman-6c6fbc8e',
       accounts: [process.env.WALLET_SECRET || ''],
     },

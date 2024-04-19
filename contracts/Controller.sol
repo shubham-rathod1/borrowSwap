@@ -27,7 +27,7 @@ interface ILogic {
         address _tokenIn,
         address _borrowedToken,
         address _user,
-        uint256 _nftID,
+        // uint256 _nftID,
         int256 _amountOut,
         int256 _repayAmount
     ) external returns (int256);
@@ -146,7 +146,7 @@ contract Controller {
         address _tokenIn,
         address _borrowedToken,
         address _user,
-        uint256 _nftID,
+        // uint256 _nftID,
         int256 _amountOut,
         int256 _repayAmount
     ) external {
@@ -163,7 +163,7 @@ contract Controller {
             _tokenIn,
             _borrowedToken,
             _user,
-            _nftID,
+            // _nftID,
             _amountOut,
             _repayAmount
         );

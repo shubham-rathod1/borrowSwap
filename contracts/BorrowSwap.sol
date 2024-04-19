@@ -26,6 +26,10 @@ interface IUnilendV2Core {
     ) external returns (int);
 }
 
+interface IUnilendV2Position {
+    function getNftId(address _pool, address _user) external returns(uint);
+}
+
 interface IComet {
     function supplyTo(address dst, address asset, uint amount) external;
     function withdrawTo(address to, address asset, uint amount) external;
@@ -52,12 +56,14 @@ interface IComet {
 contract BorrowSwap {
     ISwapRouter public constant swapRouter =
         ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
-    address constant WETH9 = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
+    address constant WETH9 = 0x82aF49447D8a07e3bd95BD0d56f35241523fBab1;
     IUnilendV2Core public constant unilendCore =
-        IUnilendV2Core(0x17dad892347803551CeEE2D377d010034df64347);
+        IUnilendV2Core(0xBBDF4e0E4FDa0842599921Be429faA3d4faa3956);
+    IUnilendV2Position public constant unilendPosition = IUnilendV2Position(0x55da4F6C98B1217095004F69e304F853663D1C11);
     IComet public constant cometAddress =
-        IComet(0xF25212E676D1F7F89Cd72fFEe66158f541246445);
+        IComet(0x9c4ec768c28520B50860ea7a15bd7213a9fF58bf);
     address public immutable controller;
+
 
     event Borrowed(
         address indexed tokenAddress,
@@ -199,17 +205,18 @@ contract BorrowSwap {
         address _tokenIn,
         address _borrowedToken,
         address _user,
-        uint256 _nftID,
+        // uint256 _nftID,
         int256 _amountOut,
         int256 _repayAmount
-    ) external returns (int256 repayAmount) {
+    ) external returns (uint nftID) {
         // swap for borrowed token
+        int repayAmount;
         if (_borrowedToken != _tokenIn) {
             if (_repayAmount < 0) repayAmount = -_repayAmount;
             exactInputSwap(
                 _tokenIn,
                 _borrowedToken,
-                _user,
+                address(this),
                 uint256(repayAmount),
                 3000,
                 10000
@@ -220,10 +227,11 @@ contract BorrowSwap {
             address(unilendCore),
             type(uint256).max
         );
+        uint nftID = unilendPosition.getNftId(_pool, _user);
         // reapay borrowed token
-        unilendCore.repay(_pool, _repayAmount, _user);
-        // redeem lend tokens to user
-        unilendCore.redeemUnderlying(_nftID, _amountOut, _user);
+        // unilendCore.repay(_pool, _repayAmount, _user);
+        // // redeem lend tokens to user
+        // unilendCore.redeemUnderlying(_nftID, _amountOut, _user);
     }
 
     function exactInputSwap(
