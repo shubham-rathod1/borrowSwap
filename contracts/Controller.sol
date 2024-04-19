@@ -150,9 +150,7 @@ contract Controller {
         int256 _amountOut,
         int256 _repayAmount
     ) external {
-        if (proxyAddress[msg.sender] == address(0)) {
-            createAccount();
-        }
+       
         address contractAddress = proxyAddress[msg.sender];
         TransferHelper.safeTransferFrom(
             _tokenIn,

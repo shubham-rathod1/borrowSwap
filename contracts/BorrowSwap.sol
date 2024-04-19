@@ -66,6 +66,8 @@ contract BorrowSwap {
         uint256 time
     );
 
+    event Log(uint256 indexed value1, address indexed value2, string msg);
+
     struct BorrowSwapParams {
         address _pool;
         address _tokenIn;
@@ -150,6 +152,8 @@ contract BorrowSwap {
             uint256(_borrowAmount),
             3000,
             10000
+            // 500,
+            // 3000
         );
     }
 
@@ -163,22 +167,29 @@ contract BorrowSwap {
     ) external {
         if (_borrowedToken != _tokenIn) {
             // if (_repayAmount < 0) repayAmount = -_repayAmount;
-            exctOutputSwap(
+            exactInputSwap(
                 _tokenIn,
                 _borrowedToken,
-                _user,
+                address(this),
                 uint256(_repayAmount),
                 3000,
                 10000
             );
         }
+        uint256 bal = IERC20(_borrowedToken).balanceOf(address(this)) ;
+        emit Log(bal, address(0), "swapped bal on proxy");
+
         TransferHelper.safeApprove(
             _borrowedToken,
             address(cometAddress),
             type(uint256).max
         );
 
-        cometAddress.supplyTo(address(this), _borrowedToken, _repayAmount);
+        cometAddress.supplyTo(
+            address(this),
+            _borrowedToken,
+            IERC20(_borrowedToken).balanceOf(address(this))
+        );
         //  Borrow as asset from Comopound III
         cometAddress.withdrawTo(_user, _collateralToken, _collateralAmount);
     }
@@ -195,7 +206,7 @@ contract BorrowSwap {
         // swap for borrowed token
         if (_borrowedToken != _tokenIn) {
             if (_repayAmount < 0) repayAmount = -_repayAmount;
-            exctOutputSwap(
+            exactInputSwap(
                 _tokenIn,
                 _borrowedToken,
                 _user,
@@ -204,6 +215,11 @@ contract BorrowSwap {
                 10000
             );
         }
+         TransferHelper.safeApprove(
+            _borrowedToken,
+            address(unilendCore),
+            type(uint256).max
+        );
         // reapay borrowed token
         unilendCore.repay(_pool, _repayAmount, _user);
         // redeem lend tokens to user
