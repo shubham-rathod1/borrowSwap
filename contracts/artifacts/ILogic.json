@@ -49,10 +49,11 @@
 		},
 		"gasEstimates": null,
 		"methodIdentifiers": {
-			"InitBorrow(address,address,address,address,uint256,int256,address)": "8f558189",
+			"InitBorrow(address,address,address,uint256,int256,address)": "92c5d035",
 			"compBorrow(address,address,address,uint256,uint256,address)": "a6d7f530",
 			"compRepay(address,address,address,address,uint256,uint256)": "501f5dbe",
-			"repayBorrow(address,address,address,address,uint256,int256,int256)": "de63a935"
+			"redeem(address,address,int256,address)": "ac7cccb0",
+			"uniRepay(address,address,address,address,uint256)": "6f0937b3"
 		}
 	},
 	"abi": [
@@ -71,11 +72,6 @@
 				{
 					"internalType": "address",
 					"name": "_tokenOUt",
-					"type": "address"
-				},
-				{
-					"internalType": "address",
-					"name": "_borrowToken",
 					"type": "address"
 				},
 				{
@@ -184,12 +180,35 @@
 				},
 				{
 					"internalType": "address",
-					"name": "_tokenIn",
+					"name": "_user",
+					"type": "address"
+				},
+				{
+					"internalType": "int256",
+					"name": "_amount",
+					"type": "int256"
+				},
+				{
+					"internalType": "address",
+					"name": "_tokenOut",
+					"type": "address"
+				}
+			],
+			"name": "redeem",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_pool",
 					"type": "address"
 				},
 				{
 					"internalType": "address",
-					"name": "_borrowedToken",
+					"name": "_tokenIn",
 					"type": "address"
 				},
 				{
@@ -198,29 +217,18 @@
 					"type": "address"
 				},
 				{
+					"internalType": "address",
+					"name": "_borrowAddress",
+					"type": "address"
+				},
+				{
 					"internalType": "uint256",
-					"name": "_nftID",
-					"type": "uint256"
-				},
-				{
-					"internalType": "int256",
-					"name": "_amountOut",
-					"type": "int256"
-				},
-				{
-					"internalType": "int256",
 					"name": "_repayAmount",
-					"type": "int256"
+					"type": "uint256"
 				}
 			],
-			"name": "repayBorrow",
-			"outputs": [
-				{
-					"internalType": "int256",
-					"name": "",
-					"type": "int256"
-				}
-			],
+			"name": "uniRepay",
+			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		}

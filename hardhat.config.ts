@@ -13,17 +13,23 @@ const config: HardhatUserConfig = {
       //   version: '0.7.6',
       // },
     ],
+    settings: {
+      optimizer: {
+        enabled: true,
+        // runs: 1000,
+      },
+      viaIR: true,
+    },
   },
   networks: {
     buildbear: {
-      // url: 'https://rpc.buildbear.io/dual-carnage-effb3e55',
-      url: 'https://rpc.buildbear.io/purring-magik-d55eb717',
-      // url: 'https://rpc.buildbear.io/honest-spiderwoman-6c6fbc8e',
+      url: 'https://rpc.buildbear.io/eager-juggernaut-447f326b',
+      // url: 'https://rpc.buildbear.io/purring-magik-d55eb717',
       accounts: [process.env.WALLET_SECRET || ''],
     },
     hardhat: {
       forking: {
-        url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API}`,
+        url: `https://polygon-mainnet.g.alchemy.com/v2/lGRIjTUZouUNPNZoyjSAFlVL0f-kvJRK`,
         enabled: true,
       },
     },

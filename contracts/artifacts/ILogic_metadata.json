@@ -23,11 +23,6 @@
 						"type": "address"
 					},
 					{
-						"internalType": "address",
-						"name": "_borrowToken",
-						"type": "address"
-					},
-					{
 						"internalType": "uint256",
 						"name": "_collateral_amount",
 						"type": "uint256"
@@ -133,12 +128,35 @@
 					},
 					{
 						"internalType": "address",
-						"name": "_tokenIn",
+						"name": "_user",
+						"type": "address"
+					},
+					{
+						"internalType": "int256",
+						"name": "_amount",
+						"type": "int256"
+					},
+					{
+						"internalType": "address",
+						"name": "_tokenOut",
+						"type": "address"
+					}
+				],
+				"name": "redeem",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_pool",
 						"type": "address"
 					},
 					{
 						"internalType": "address",
-						"name": "_borrowedToken",
+						"name": "_tokenIn",
 						"type": "address"
 					},
 					{
@@ -147,29 +165,18 @@
 						"type": "address"
 					},
 					{
+						"internalType": "address",
+						"name": "_borrowAddress",
+						"type": "address"
+					},
+					{
 						"internalType": "uint256",
-						"name": "_nftID",
-						"type": "uint256"
-					},
-					{
-						"internalType": "int256",
-						"name": "_amountOut",
-						"type": "int256"
-					},
-					{
-						"internalType": "int256",
 						"name": "_repayAmount",
-						"type": "int256"
+						"type": "uint256"
 					}
 				],
-				"name": "repayBorrow",
-				"outputs": [
-					{
-						"internalType": "int256",
-						"name": "",
-						"type": "int256"
-					}
-				],
+				"name": "uniRepay",
+				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			}
@@ -195,8 +202,8 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
-			"runs": 200
+			"enabled": true,
+			"runs": 1000
 		},
 		"remappings": []
 	},
@@ -218,11 +225,11 @@
 			]
 		},
 		"Controller.sol": {
-			"keccak256": "0xd6cb22393322d11d1860161597baab84ec0001404bdaf0c6dcc78c50541ea5dd",
+			"keccak256": "0x424e98710e96037c2c111ac89d57a32b4596ba97404c4728bec5803c0f079ccf",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://cfc6eb64da691efd1968119581acd91b452b0354b03edb05855df70d547005b0",
-				"dweb:/ipfs/QmdSR24kV57Ttrb1t1vEgib6qNa2eJT6okSx2FRFKdJ8wR"
+				"bzz-raw://507213853be209b9607f12a02111bef622ebe01d96666e28f48c366226831ece",
+				"dweb:/ipfs/QmYwpXSSXxtC9THZqtZwrL1HtMvNYuNno8qQrMyNkDMqrP"
 			]
 		},
 		"hardhat/console.sol": {

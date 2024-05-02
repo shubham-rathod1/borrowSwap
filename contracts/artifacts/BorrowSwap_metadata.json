@@ -52,15 +52,15 @@
 					},
 					{
 						"indexed": true,
-						"internalType": "address",
+						"internalType": "uint256",
 						"name": "value2",
-						"type": "address"
+						"type": "uint256"
 					},
 					{
-						"indexed": false,
-						"internalType": "string",
-						"name": "msg",
-						"type": "string"
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "value3",
+						"type": "uint256"
 					}
 				],
 				"name": "Log",
@@ -81,11 +81,6 @@
 					{
 						"internalType": "address",
 						"name": "_tokenOUt",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "_borrowToken",
 						"type": "address"
 					},
 					{
@@ -212,6 +207,51 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "emptyFn",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "result",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "contract AggregatorV3Interface",
+						"name": "priceFeed",
+						"type": "address"
+					}
+				],
+				"name": "getLatestPrice",
+				"outputs": [
+					{
+						"internalType": "int256",
+						"name": "price",
+						"type": "int256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "helper",
+				"outputs": [
+					{
+						"internalType": "contract IUnilendHelper",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -220,43 +260,22 @@
 					},
 					{
 						"internalType": "address",
-						"name": "_tokenIn",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "_borrowedToken",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
 						"name": "_user",
 						"type": "address"
 					},
 					{
-						"internalType": "uint256",
-						"name": "_nftID",
-						"type": "uint256"
-					},
-					{
 						"internalType": "int256",
-						"name": "_amountOut",
+						"name": "_amount",
 						"type": "int256"
 					},
 					{
-						"internalType": "int256",
-						"name": "_repayAmount",
-						"type": "int256"
+						"internalType": "address",
+						"name": "_tokenOut",
+						"type": "address"
 					}
 				],
-				"name": "repayBorrow",
-				"outputs": [
-					{
-						"internalType": "int256",
-						"name": "repayAmount",
-						"type": "int256"
-					}
-				],
+				"name": "redeem",
+				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
@@ -274,11 +293,57 @@
 				"type": "function"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_pool",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_tokenIn",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_borrowAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_repayAmount",
+						"type": "uint256"
+					}
+				],
+				"name": "uniRepay",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "unilendCore",
 				"outputs": [
 					{
 						"internalType": "contract IUnilendV2Core",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "unilendPosition",
+				"outputs": [
+					{
+						"internalType": "contract IUnilendV2Position",
 						"name": "",
 						"type": "address"
 					}
@@ -308,8 +373,8 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
-			"runs": 200
+			"enabled": true,
+			"runs": 1000
 		},
 		"remappings": []
 	},
@@ -347,11 +412,11 @@
 			]
 		},
 		"BorrowSwap.sol": {
-			"keccak256": "0x9337fed0a261d56a89b78b526ea9477ff61fb40d65389d7c75f2d547ecc57d29",
+			"keccak256": "0x4a83eabf1e1e8d46475b2a795a666128ff3871be55f172376ea6b8d30860c22a",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://079dbb2d1bffe696adc97b0b44e91758f043ce87467eebba3399a9f5dd1c2f73",
-				"dweb:/ipfs/Qmcp9riK9oRqzv8nE3PMfWtPYm4oneCKzHTDjh6ZfgJ4Dd"
+				"bzz-raw://0511b4f0e12fc003361c699feaae9d6e1419619a7ebb0d7ce028c8d79c3ad90c",
+				"dweb:/ipfs/QmRd8esAXfbEsWN2wuB6h6k6Empq5weQqUqpLyLDWGepuY"
 			]
 		},
 		"hardhat/console.sol": {

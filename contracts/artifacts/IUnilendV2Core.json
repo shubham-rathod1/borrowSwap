@@ -50,7 +50,9 @@
 		"gasEstimates": null,
 		"methodIdentifiers": {
 			"borrow(address,int256,uint256,address)": "8dee9460",
-			"redeemUnderlying(uint256,int256,address)": "99cd69d1",
+			"getOraclePrice(address,address,uint256)": "94a76cbb",
+			"redeem(address,int256,address)": "5833cdf9",
+			"redeemUnderlying(address,int256,address)": "e96466d0",
 			"repay(address,int256,address)": "82626547"
 		}
 	},
@@ -86,13 +88,71 @@
 		{
 			"inputs": [
 				{
+					"internalType": "address",
+					"name": "_token0",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_token1",
+					"type": "address"
+				},
+				{
 					"internalType": "uint256",
-					"name": "_nftID",
+					"name": "_amount",
 					"type": "uint256"
+				}
+			],
+			"name": "getOraclePrice",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_pool",
+					"type": "address"
 				},
 				{
 					"internalType": "int256",
-					"name": "amount",
+					"name": "_token_amount",
+					"type": "int256"
+				},
+				{
+					"internalType": "address",
+					"name": "_receiver",
+					"type": "address"
+				}
+			],
+			"name": "redeem",
+			"outputs": [
+				{
+					"internalType": "int256",
+					"name": "",
+					"type": "int256"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_pool",
+					"type": "address"
+				},
+				{
+					"internalType": "int256",
+					"name": "_amount",
 					"type": "int256"
 				},
 				{

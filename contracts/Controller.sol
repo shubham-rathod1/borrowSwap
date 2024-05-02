@@ -17,20 +17,17 @@ interface ILogic {
         address _pool,
         address _supplyAsset,
         address _tokenOUt,
-        address _borrowToken,
         uint256 _collateral_amount,
         int256 _amount,
         address _user
     ) external;
-    function repayBorrow(
+    function uniRepay(
         address _pool,
         address _tokenIn,
-        address _borrowedToken,
         address _user,
-        uint256 _nftID,
-        int256 _amountOut,
-        int256 _repayAmount
-    ) external returns (int256);
+        address _borrowAddress,
+        uint256 _repayAmount
+    ) external;
 
     function compRepay(
         address _borrowedToken,
@@ -40,6 +37,8 @@ interface ILogic {
         uint256 _collateralAmount,
         uint256 _repayAmount
     ) external;
+    
+    function redeem(address _pool, address _user, int _amount, address _tokenOut) external;
 }
 
 contract Controller {
@@ -115,7 +114,6 @@ contract Controller {
         address _pool,
         address _supplyAsset,
         address _tokenOUt,
-        address _borrowToken,
         uint256 _collateral_amount,
         int256 _amount,
         address _user
@@ -134,40 +132,45 @@ contract Controller {
             _pool,
             _supplyAsset,
             _tokenOUt,
-            _borrowToken,
             _collateral_amount,
             _amount,
             _user
         );
     }
 
+    function uniRedeem(address _pool, address _user, int _amount, address _tokenOut) external {
+        if (proxyAddress[msg.sender] == address(0)) {
+            createAccount();
+        }
+        address contractAddress = proxyAddress[msg.sender];
+        ILogic(contractAddress).redeem(_pool, _user, _amount, _tokenOut);
+    }
+
     function uniRepay(
         address _pool,
         address _tokenIn,
-        address _borrowedToken,
         address _user,
-        uint256 _nftID,
-        int256 _amountOut,
-        int256 _repayAmount
+        address _borrowAddress,
+        uint256 _repayAmount
     ) external {
-       
         address contractAddress = proxyAddress[msg.sender];
+        require(contractAddress != address(0), "No borrow position available!");
+
         TransferHelper.safeTransferFrom(
             _tokenIn,
             msg.sender,
             contractAddress,
             uint256(_repayAmount)
         );
-        ILogic(contractAddress).repayBorrow(
+        ILogic(contractAddress).uniRepay(
             _pool,
             _tokenIn,
-            _borrowedToken,
             _user,
-            _nftID,
-            _amountOut,
+            _borrowAddress,
             _repayAmount
         );
     }
+
     function reapay(
         address _borrowedToken,
         address _tokenIn,

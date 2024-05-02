@@ -1,5 +1,6 @@
 import { ethers } from 'hardhat';
 import borrowSwapAbi from '../abis/borrowSwap.json';
+import { abi } from '../artifacts/contracts/Controller.sol/Controller.json';
 import ERC20Abi from '../abis/ERC20Abi.json';
 import ERCProxy from '../abis/borrowSwap.json';
 import cometAbi from '../abis/comet.json';
@@ -15,6 +16,11 @@ async function main() {
     borrowSwap.target,
   ]);
   await controller.waitForDeployment();
+
+  // const controller = await ethers.getContractAt(
+  //   abi,
+  //   '0x28202Df29E0a909EB023f5b464BC166E24556018'
+  // );
 
   console.log('borrowSwap contract deployed at:', borrowSwap.target);
   console.log('controller contract deployed at:', controller.target);
@@ -88,7 +94,7 @@ async function main() {
   // );
 
   // console.log('borrowed successfully');
-  
+
   // await controller.compoundBorrow(
   //   '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6',
   //   '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
@@ -114,24 +120,52 @@ async function main() {
   await controller.uniBorrow(
     '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
     '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a',
+    // '0x172370d5Cd63279eFa6d502DAB29171933a610AF',
     '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-    '0x172370d5cd63279efa6d502dab29171933a610af',
-    '100000000000000000',
-    '20000000000000000',
+    '10000000000000000000',
+    '200000000000000',
     owner.address
   );
 
-  console.log("borrowed");
+  console.log('borrowed');
 
   await controller.uniRepay(
     '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
-    '0x172370d5cd63279efa6d502dab29171933a610af',
-    '0x172370d5cd63279efa6d502dab29171933a610af',
+    '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
     owner.address,
-    1,
-    '1000000000000000000',
-    '10000000'
+    '0x172370d5cd63279efa6d502dab29171933a610af',
+    '1000000'
   );
+
+  // await controller.uniRedeem(
+  //   '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
+  //   '0x99A221a87b3C2238C90650fa9BE0F11e4c499D06',
+  //   '-1000000',
+  //   '0xc2132D05D31c914a87C6611C10748AEb04B58e8F'
+  // );
+
+// {
+//   2660238555926038304;
+//   1427512834650167177;
+//   3311919108238273417;
+//   2595323879895488917;
+//   356360872001386646;
+//   899013373135531923;
+//   377142888096790786;
+//   1066401022566718005;
+//   1771791010627;
+//   6101617954667;
+//   981347819721060;
+//   0;
+//   0;
+//   787828853560655;
+//   1000000685074024;
+//   0;
+//   0;
+//   934530295573370;
+//   115792089237316195423570985008687907853269984665640564039457584007913129639935;
+//   1637037086283165914;
+// }
 
   // const balance = await comet.collateralBalanceOf(
   //   addresses,
@@ -144,21 +178,11 @@ async function main() {
   // );
 
   // console.log('collateral balance of user', contractBalance);
+
   console.log(
     'user balance of borrowAsset',
     await USDT.balanceOf(owner.address)
   );
-
-  // calling init to intiate borrow swap
-
-  // await borrowSwap.InitBorrow(
-  //   '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
-  //   '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a',
-  //   '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-  //   '0x172370d5cd63279efa6d502dab29171933a610af',
-  //   '1000000000000000000',
-  //   '1000000000000000'
-  // );
 }
 
 // We recommend this pattern to be able to use async/await everywhere
