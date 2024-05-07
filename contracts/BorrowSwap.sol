@@ -203,6 +203,13 @@ contract BorrowSwap {
         uint collateral;
         uint value;
     }
+    struct FeeStructure {
+        address tokenIn;
+        uint swapFee0;
+        address weth;
+        uint swapFee1;
+        address tokenOut;
+    }
     // make constructor values hardcode and use init function
     constructor() {
         controller = msg.sender;
@@ -239,7 +246,8 @@ contract BorrowSwap {
         address _tokenOUt,
         uint256 _collateral_amount,
         int256 _amount,
-        address _user
+        address _user,
+        uint24[] memory _route
     ) external {
         address token0 = IUnilendPool(_pool).token0();
         address token1 = IUnilendPool(_pool).token1();
@@ -267,13 +275,16 @@ contract BorrowSwap {
 
         if (_amount < 0) _amount = -_amount;
 
+        // FeeStructure memory decoded = abi.decode(_route, (FeeStructure));
+
+        // emit Log(decoded.fee0, decoded.fee1, 0);
+
         exactInputSwap(
             borrowToken,
             _tokenOUt,
             _user,
             IERC20(borrowToken).balanceOf(address(this)),
-            3000,
-            10000
+            _route
         );
     }
 
@@ -299,16 +310,16 @@ contract BorrowSwap {
         //  Borrow as asset from Comopound III
         cometAddress.withdrawTo(address(this), _borrowAsset, _borrowAmount);
         // swap borrowed asset for tokenOut
-        exactInputSwap(
-            _borrowAsset,
-            _tokenOut,
-            _user,
-            uint256(_borrowAmount),
-            3000,
-            10000
-            // 500,
-            // 3000
-        );
+        // exactInputSwap(
+        //     _borrowAsset,
+        //     _tokenOut,
+        //     _user,
+        //     uint256(_borrowAmount),
+        //     3000,
+        //     10000
+        //     // 500,
+        //     // 3000
+        // );
     }
 
     function compRepay(
@@ -321,14 +332,14 @@ contract BorrowSwap {
     ) external {
         if (_borrowedToken != _tokenIn) {
             // if (_repayAmount < 0) repayAmount = -_repayAmount;
-            exactInputSwap(
-                _tokenIn,
-                _borrowedToken,
-                address(this),
-                uint256(_repayAmount),
-                3000,
-                10000
-            );
+            // exactInputSwap(
+            //     _tokenIn,
+            //     _borrowedToken,
+            //     address(this),
+            //     uint256(_repayAmount),
+            //     3000,
+            //     10000
+            // );
         }
         uint256 bal = IERC20(_borrowedToken).balanceOf(address(this));
 
@@ -358,7 +369,8 @@ contract BorrowSwap {
         address _tokenIn,
         address _user,
         address _borrowAddress,
-        uint256 _repayAmount
+        uint256 _repayAmount,
+        uint24[] memory _route
     ) external {
         int repayAmount;
         uint amountOut;
@@ -376,14 +388,13 @@ contract BorrowSwap {
                 _borrowAddress,
                 address(this),
                 uint256(_repayAmount),
-                3000,
-                10000
+               _route
             );
         } else {
             amountOut = _repayAmount;
         }
 
-        emit Log(amountOut, 0, 0);
+        // emit Log(amountOut, 0, 0);
 
         TransferHelper.safeApprove(
             _borrowAddress,
@@ -454,7 +465,13 @@ contract BorrowSwap {
         // unilendCore.redeem(nftID, type(uint).max, _user);
     }
 
-    function redeem(address _pool, address _user, int _amount, address _tokenOut) external {
+    function redeem(
+        address _pool,
+        address _user,
+        int _amount,
+        address _tokenOut,
+        uint24[] memory _route
+    ) external {
         PoolData memory poolData = getPoolData(
             _pool,
             address(this),
@@ -471,31 +488,29 @@ contract BorrowSwap {
         if (_amount < 0) {
             if (borrowBalance1 > 0) {
                 unilendCore.redeemUnderlying(_pool, _amount, address(this));
-                emit Log(1, borrowBalance1, 0);
-                
+                // emit Log(1, borrowBalance1, 0);
             } else {
                 unilendCore.redeem(_pool, _amount, address(this));
-                emit Log(0, 1, borrowBalance1);
+                // emit Log(0, 1, borrowBalance1);
             }
         } else {
             if (borrowBalance0 > 0) {
                 unilendCore.redeemUnderlying(_pool, _amount, address(this));
-                emit Log(0, borrowBalance0, 1);
+                // emit Log(0, borrowBalance0, 1);
             } else {
                 unilendCore.redeem(_pool, _amount, address(this));
-                emit Log(1, 1, borrowBalance0);
+                // emit Log(1, 1, borrowBalance0);
             }
         }
 
         // if (_borrowedToken != _tokenIn) {
-        //     // if (_repayAmount < 0) repayAmount = -_repayAmount;
+        //     if (_repayAmount < 0) repayAmount = -_repayAmount;
         //     exactInputSwap(
         //         _tokenIn,
         //         _borrowedToken,
         //         _user,
         //         uint256(_repayAmount),
-        //         3000,
-        //         10000
+        //         _route
         //     );
         // }
     }
@@ -528,20 +543,31 @@ contract BorrowSwap {
         address tokenOut,
         address _user,
         uint256 _amountIn,
-        uint24 swapFee0,
-        uint24 swapFee1
-    ) internal returns (uint256 amountOut) {
+        uint24[] memory _route
+    )
+        internal
+        returns (
+            // bytes calldata route
+            uint256 amountOut
+        )
+    {
         TransferHelper.safeApprove(tokenIn, address(swapRouter), _amountIn);
+        bytes memory path;
+        if (_route.length > 1) {
+            path = abi.encodePacked(
+                tokenIn,
+                _route[0],
+                WETH9,
+                _route[1],
+                tokenOut
+            );
+        } else {
+            path = abi.encodePacked(tokenIn, _route[0], tokenOut);
+        }
 
         ISwapRouter.ExactInputParams memory params = ISwapRouter
             .ExactInputParams({
-                path: abi.encodePacked(
-                    tokenIn,
-                    swapFee0,
-                    WETH9,
-                    swapFee1,
-                    tokenOut
-                ),
+                path: path,
                 recipient: _user,
                 deadline: block.timestamp,
                 amountIn: _amountIn,

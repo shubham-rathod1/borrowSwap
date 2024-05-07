@@ -19,14 +19,16 @@ interface ILogic {
         address _tokenOUt,
         uint256 _collateral_amount,
         int256 _amount,
-        address _user
+        address _user,
+        uint24[] memory _route
     ) external;
     function uniRepay(
         address _pool,
         address _tokenIn,
         address _user,
         address _borrowAddress,
-        uint256 _repayAmount
+        uint256 _repayAmount,
+        uint24[] memory _route
     ) external;
 
     function compRepay(
@@ -37,8 +39,13 @@ interface ILogic {
         uint256 _collateralAmount,
         uint256 _repayAmount
     ) external;
-    
-    function redeem(address _pool, address _user, int _amount, address _tokenOut) external;
+
+    function redeem(
+        address _pool,
+        address _user,
+        int _amount,
+        address _tokenOut
+    ) external;
 }
 
 contract Controller {
@@ -116,7 +123,8 @@ contract Controller {
         address _tokenOUt,
         uint256 _collateral_amount,
         int256 _amount,
-        address _user
+        address _user,
+        uint24[] memory _route
     ) external {
         if (proxyAddress[msg.sender] == address(0)) {
             createAccount();
@@ -134,11 +142,17 @@ contract Controller {
             _tokenOUt,
             _collateral_amount,
             _amount,
-            _user
+            _user,
+            _route
         );
     }
 
-    function uniRedeem(address _pool, address _user, int _amount, address _tokenOut) external {
+    function uniRedeem(
+        address _pool,
+        address _user,
+        int _amount,
+        address _tokenOut
+    ) external {
         if (proxyAddress[msg.sender] == address(0)) {
             createAccount();
         }
@@ -151,7 +165,8 @@ contract Controller {
         address _tokenIn,
         address _user,
         address _borrowAddress,
-        uint256 _repayAmount
+        uint256 _repayAmount,
+        uint24[] memory _route
     ) external {
         address contractAddress = proxyAddress[msg.sender];
         require(contractAddress != address(0), "No borrow position available!");
@@ -167,7 +182,8 @@ contract Controller {
             _tokenIn,
             _user,
             _borrowAddress,
-            _repayAmount
+            _repayAmount,
+            _route
         );
     }
 

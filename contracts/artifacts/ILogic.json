@@ -49,11 +49,11 @@
 		},
 		"gasEstimates": null,
 		"methodIdentifiers": {
-			"InitBorrow(address,address,address,uint256,int256,address)": "92c5d035",
+			"InitBorrow(address,address,address,uint256,int256,address,uint24[])": "d2ef04d4",
 			"compBorrow(address,address,address,uint256,uint256,address)": "a6d7f530",
 			"compRepay(address,address,address,address,uint256,uint256)": "501f5dbe",
 			"redeem(address,address,int256,address)": "ac7cccb0",
-			"uniRepay(address,address,address,address,uint256)": "6f0937b3"
+			"uniRepay(address,address,address,address,uint256,uint24[])": "b5c8b759"
 		}
 	},
 	"abi": [
@@ -88,6 +88,11 @@
 					"internalType": "address",
 					"name": "_user",
 					"type": "address"
+				},
+				{
+					"internalType": "uint24[]",
+					"name": "_route",
+					"type": "uint24[]"
 				}
 			],
 			"name": "InitBorrow",
@@ -225,6 +230,11 @@
 					"internalType": "uint256",
 					"name": "_repayAmount",
 					"type": "uint256"
+				},
+				{
+					"internalType": "uint24[]",
+					"name": "_route",
+					"type": "uint24[]"
 				}
 			],
 			"name": "uniRepay",
