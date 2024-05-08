@@ -220,27 +220,7 @@ contract BorrowSwap {
         _;
     }
 
-    // function setOracleAddress(address _oracleAddress) external {
-    //     require(_oracleAddress != address(0), "Zero address");
-    //     OracleAddress = _oracleAddress;
-    // }
-
-    function getLatestPrice(
-        AggregatorV3Interface priceFeed
-    ) public view returns (int price) {
-        (
-            ,
-            /*uint80 roundID*/ price,
-            /*uint startedAt*/
-            /*uint timeStamp*/
-            /*uint80 answeredInRound*/
-            ,
-            ,
-
-        ) = priceFeed.latestRoundData();
-    }
-
-    function InitBorrow(
+    function UniBorrow(
         address _pool,
         address _supplyAsset,
         address _tokenOUt,
@@ -274,9 +254,6 @@ contract BorrowSwap {
         );
 
         if (_amount < 0) _amount = -_amount;
-
-        // FeeStructure memory decoded = abi.decode(_route, (FeeStructure));
-
         // emit Log(decoded.fee0, decoded.fee1, 0);
 
         exactInputSwap(
@@ -388,7 +365,7 @@ contract BorrowSwap {
                 _borrowAddress,
                 address(this),
                 uint256(_repayAmount),
-               _route
+                _route
             );
         } else {
             amountOut = _repayAmount;
@@ -417,52 +394,6 @@ contract BorrowSwap {
                 IERC20(_borrowAddress).balanceOf(address(this))
             );
         }
-
-        // reapay borrowed token
-        // uint256 nftID = unilendPosition.getNftId(_pool, _user);
-
-        // require(nftID == 5, "id not 5");
-
-        // int price0 = getLatestPrice(AggregatorV3Interface(_source0));
-        // int price1 = getLatestPrice(AggregatorV3Interface(_source1));
-
-        // CollateralData memory collateralData;
-
-        // if (_borrowedToken == poolData.token0) {
-        //     // collateralData.priceRatio = price0 / price1;
-        //     collateralData.value = unilendCore.getOraclePrice(
-        //         poolData.token0,
-        //         poolData.token1,
-        //         poolData.borrowBalance0
-        //     );
-        //     collateralData.collateral =
-        //         (collateralData.value * 1e18) /
-        //         (poolData.ltv * 1e18) /
-        //         100;
-        //     collateralData.reedemable =
-        //         poolData.lendBalance1 -
-        //         collateralData.collateral;
-        // } else {
-        //     collateralData.value = unilendCore.getOraclePrice(
-        //         poolData.token1,
-        //         poolData.token0,
-        //         poolData.borrowBalance1
-        //     );
-        //     collateralData.collateral =
-        //         (collateralData.value * 1e18) /
-        //         (poolData.ltv * 1e18) /
-        //         100;
-        //     collateralData.reedemable =
-        //         poolData.lendBalance1 -
-        //         collateralData.collateral;
-        // }
-        // emit Log(
-        //     uint(collateralData.collateral),
-        //     uint(collateralData.reedemable),
-        //     uint(collateralData.value)
-        // );
-        // return collateralData.reedemable;
-        // unilendCore.redeem(nftID, type(uint).max, _user);
     }
 
     function redeem(

@@ -17,8 +17,8 @@ async function main() {
   ]);
   await controller.waitForDeployment();
 
-  const encoded = await ethers.deployContract('Encoding');
-  await encoded.waitForDeployment();
+  // const encoded = await ethers.deployContract('Encoding');
+  // await encoded.waitForDeployment();
 
   // const controller = await ethers.getContractAt(
   //   abi,
@@ -27,7 +27,7 @@ async function main() {
 
   console.log('borrowSwap contract deployed at:', borrowSwap.target);
   console.log('controller contract deployed at:', controller.target);
-  console.log('encoding contract deployed at:', encoded.target);
+  // console.log('encoding contract deployed at:', encoded.target);
   // let addresses = await controller.proxyAddress(`${owner.address}`);
   // console.log(addresses, 'contract address mapping');
 
@@ -75,12 +75,6 @@ async function main() {
 
   // console.log("tokens approved",owner.address);
 
-  // console.log(
-  //   'approval given - WETH',
-  //   await Sushi.allowance(owner.address, controller.target),
-  //   await Curv.allowance(owner.address, controller.target)
-  //   // await Sushi.allowance(owner.address, borrowSwap.target)
-  // );
 
   // console.log(
   //   'balance of curv, sushi',
@@ -121,18 +115,19 @@ async function main() {
   // );
   // console.log(address, "my contract address");
 
-  const coder = new ethers.AbiCoder();
+  // const coder = new ethers.AbiCoder();
 
-  await controller.uniBorrow(
-    '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
-    '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a',
-    // '0x172370d5Cd63279eFa6d502DAB29171933a610AF',
-    '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-    '10000000000000000000',
-    '200000000000000',
-    owner.address,
-    [3000,10000]
-  );
+  await controller.uniBorrow({
+    _pool: '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
+    _supplyAsset: '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a',
+    _tokenOUt: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+    _collateral_amount: '10000000000000000000',
+    _amount: '200000000000000',
+    _user: owner.address,
+    _route: [3000, 10000],
+  });
+
+  console.log("borrowed");
 
   // await encoded.test(
   //   coder.encode(
@@ -149,14 +144,14 @@ async function main() {
   //   )
   // );
 
-  await controller.uniRepay(
-    '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
-    '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-    owner.address,
-    '0x172370d5cd63279efa6d502dab29171933a610af',
-    '1000000',
-    [3000,10000]
-  );
+  await controller.uniRepay({
+    _pool: '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
+    _tokenIn: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+    _user: owner.address,
+    _borrowAddress: '0x172370d5cd63279efa6d502dab29171933a610af',
+    _repayAmount: '1000000',
+    _route: [3000, 500],
+  });
 
   // await controller.uniRedeem(
   //   '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
@@ -165,28 +160,6 @@ async function main() {
   //   '0xc2132D05D31c914a87C6611C10748AEb04B58e8F'
   // );
 
-  // {
-  //   2660238555926038304;
-  //   1427512834650167177;
-  //   3311919108238273417;
-  //   2595323879895488917;
-  //   356360872001386646;
-  //   899013373135531923;
-  //   377142888096790786;
-  //   1066401022566718005;
-  //   1771791010627;
-  //   6101617954667;
-  //   981347819721060;
-  //   0;
-  //   0;
-  //   787828853560655;
-  //   1000000685074024;
-  //   0;
-  //   0;
-  //   934530295573370;
-  //   115792089237316195423570985008687907853269984665640564039457584007913129639935;
-  //   1637037086283165914;
-  // }
 
   // const balance = await comet.collateralBalanceOf(
   //   addresses,

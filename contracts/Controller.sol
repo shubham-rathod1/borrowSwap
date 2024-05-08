@@ -13,7 +13,7 @@ interface ILogic {
         uint _borrowAmount,
         address user
     ) external;
-    function InitBorrow(
+    function UniBorrow(
         address _pool,
         address _supplyAsset,
         address _tokenOUt,
@@ -46,6 +46,32 @@ interface ILogic {
         int _amount,
         address _tokenOut
     ) external;
+}
+
+struct UniBorrow {
+    address _pool;
+    address _supplyAsset;
+    address _tokenOUt;
+    uint256 _collateral_amount;
+    int256 _amount;
+    address _user;
+    uint24[] _route;
+}
+
+struct UniRepay {
+    address _pool;
+    address _tokenIn;
+    address _user;
+    address _borrowAddress;
+    uint256 _repayAmount;
+    uint24[] _route;
+}
+
+struct UniRedeem {
+    address _pool;
+    address _user;
+    int _amount;
+    address _tokenOut;
 }
 
 contract Controller {
@@ -117,73 +143,57 @@ contract Controller {
         );
     }
 
-    function uniBorrow(
-        address _pool,
-        address _supplyAsset,
-        address _tokenOUt,
-        uint256 _collateral_amount,
-        int256 _amount,
-        address _user,
-        uint24[] memory _route
-    ) external {
+    function uniBorrow(UniBorrow memory params) external {
         if (proxyAddress[msg.sender] == address(0)) {
             createAccount();
         }
         address contractAddress = proxyAddress[msg.sender];
         TransferHelper.safeTransferFrom(
-            _supplyAsset,
+            params._supplyAsset,
             msg.sender,
             contractAddress,
-            _collateral_amount
+            params._collateral_amount
         );
-        ILogic(contractAddress).InitBorrow(
-            _pool,
-            _supplyAsset,
-            _tokenOUt,
-            _collateral_amount,
-            _amount,
-            _user,
-            _route
+        ILogic(contractAddress).UniBorrow(
+            params._pool,
+            params._supplyAsset,
+            params._tokenOUt,
+            params._collateral_amount,
+            params._amount,
+            params._user,
+            params._route
         );
     }
 
-    function uniRedeem(
-        address _pool,
-        address _user,
-        int _amount,
-        address _tokenOut
-    ) external {
-        if (proxyAddress[msg.sender] == address(0)) {
-            createAccount();
-        }
+    function uniRedeem(UniRedeem memory params) external {
         address contractAddress = proxyAddress[msg.sender];
-        ILogic(contractAddress).redeem(_pool, _user, _amount, _tokenOut);
+        require(contractAddress != address(0), "No position available!");
+
+        ILogic(contractAddress).redeem(
+            params._pool,
+            params._user,
+            params._amount,
+            params._tokenOut
+        );
     }
 
-    function uniRepay(
-        address _pool,
-        address _tokenIn,
-        address _user,
-        address _borrowAddress,
-        uint256 _repayAmount,
-        uint24[] memory _route
-    ) external {
+    function uniRepay(UniRepay memory params) external {
         address contractAddress = proxyAddress[msg.sender];
         require(contractAddress != address(0), "No borrow position available!");
 
         TransferHelper.safeTransferFrom(
-            _tokenIn,
+            params._tokenIn,
             msg.sender,
             contractAddress,
-            uint256(_repayAmount)
+            uint256(params._repayAmount)
         );
         ILogic(contractAddress).uniRepay(
-            _pool,
-            _tokenIn,
-            _user,
-            _borrowAddress,
-            _repayAmount,
-            _route
+            params._pool,
+            params._tokenIn,
+            params._user,
+            params._borrowAddress,
+            params._repayAmount,
+            params._route
         );
     }
 
