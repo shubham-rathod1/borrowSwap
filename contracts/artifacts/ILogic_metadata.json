@@ -9,49 +9,6 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "_pool",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "_supplyAsset",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "_tokenOUt",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "_collateral_amount",
-						"type": "uint256"
-					},
-					{
-						"internalType": "int256",
-						"name": "_amount",
-						"type": "int256"
-					},
-					{
-						"internalType": "address",
-						"name": "_user",
-						"type": "address"
-					},
-					{
-						"internalType": "uint24[]",
-						"name": "_route",
-						"type": "uint24[]"
-					}
-				],
-				"name": "InitBorrow",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
 						"name": "_supplyAsset",
 						"type": "address"
 					},
@@ -79,6 +36,11 @@
 						"internalType": "address",
 						"name": "user",
 						"type": "address"
+					},
+					{
+						"internalType": "uint24[]",
+						"name": "_route",
+						"type": "uint24[]"
 					}
 				],
 				"name": "compBorrow",
@@ -117,6 +79,11 @@
 						"internalType": "uint256",
 						"name": "_repayAmount",
 						"type": "uint256"
+					},
+					{
+						"internalType": "uint24[]",
+						"name": "_route",
+						"type": "uint24[]"
 					}
 				],
 				"name": "compRepay",
@@ -145,9 +112,57 @@
 						"internalType": "address",
 						"name": "_tokenOut",
 						"type": "address"
+					},
+					{
+						"internalType": "uint24[]",
+						"name": "_route",
+						"type": "uint24[]"
 					}
 				],
 				"name": "redeem",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_pool",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_supplyAsset",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_tokenOUt",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_collateral_amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "int256",
+						"name": "_amount",
+						"type": "int256"
+					},
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					},
+					{
+						"internalType": "uint24[]",
+						"name": "_route",
+						"type": "uint24[]"
+					}
+				],
+				"name": "uniBorrow",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -235,11 +250,11 @@
 			]
 		},
 		"Controller.sol": {
-			"keccak256": "0x7971f3490fbd1122f80e14635e70e8c177b9815c0ac710b1ce161fd30f36b097",
+			"keccak256": "0xd0cefec33ce6edf29ea36cc1dee54db58a7a4e8978e43c27f6ab49f84c3739c6",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://2c62fe78a16d5ab83921f24bc4b135504dd3a67a07a980c34a137d8933ed6a29",
-				"dweb:/ipfs/QmcexRTJCJ5pC3gBxmvxEqbxdGgZd8x5mxkZffeNcAqB28"
+				"bzz-raw://04f544b3f96895ea2823b888245e53af964512e2a1cb9e9ccb931e0a9dbe0e1a",
+				"dweb:/ipfs/QmQ7mjBxT7hy6s5u7HAR5fMBgafDCYFSBrQhk84cqaJk9e"
 			]
 		},
 		"hardhat/console.sol": {

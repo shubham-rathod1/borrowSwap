@@ -49,57 +49,14 @@
 		},
 		"gasEstimates": null,
 		"methodIdentifiers": {
-			"InitBorrow(address,address,address,uint256,int256,address,uint24[])": "d2ef04d4",
-			"compBorrow(address,address,address,uint256,uint256,address)": "a6d7f530",
-			"compRepay(address,address,address,address,uint256,uint256)": "501f5dbe",
-			"redeem(address,address,int256,address)": "ac7cccb0",
+			"compBorrow(address,address,address,uint256,uint256,address,uint24[])": "a36cc4cd",
+			"compRepay(address,address,address,address,uint256,uint256,uint24[])": "e2bdb2c6",
+			"redeem(address,address,int256,address,uint24[])": "687a1204",
+			"uniBorrow(address,address,address,uint256,int256,address,uint24[])": "315a1451",
 			"uniRepay(address,address,address,address,uint256,uint24[])": "b5c8b759"
 		}
 	},
 	"abi": [
-		{
-			"inputs": [
-				{
-					"internalType": "address",
-					"name": "_pool",
-					"type": "address"
-				},
-				{
-					"internalType": "address",
-					"name": "_supplyAsset",
-					"type": "address"
-				},
-				{
-					"internalType": "address",
-					"name": "_tokenOUt",
-					"type": "address"
-				},
-				{
-					"internalType": "uint256",
-					"name": "_collateral_amount",
-					"type": "uint256"
-				},
-				{
-					"internalType": "int256",
-					"name": "_amount",
-					"type": "int256"
-				},
-				{
-					"internalType": "address",
-					"name": "_user",
-					"type": "address"
-				},
-				{
-					"internalType": "uint24[]",
-					"name": "_route",
-					"type": "uint24[]"
-				}
-			],
-			"name": "InitBorrow",
-			"outputs": [],
-			"stateMutability": "nonpayable",
-			"type": "function"
-		},
 		{
 			"inputs": [
 				{
@@ -131,6 +88,11 @@
 					"internalType": "address",
 					"name": "user",
 					"type": "address"
+				},
+				{
+					"internalType": "uint24[]",
+					"name": "_route",
+					"type": "uint24[]"
 				}
 			],
 			"name": "compBorrow",
@@ -169,6 +131,11 @@
 					"internalType": "uint256",
 					"name": "_repayAmount",
 					"type": "uint256"
+				},
+				{
+					"internalType": "uint24[]",
+					"name": "_route",
+					"type": "uint24[]"
 				}
 			],
 			"name": "compRepay",
@@ -197,9 +164,57 @@
 					"internalType": "address",
 					"name": "_tokenOut",
 					"type": "address"
+				},
+				{
+					"internalType": "uint24[]",
+					"name": "_route",
+					"type": "uint24[]"
 				}
 			],
 			"name": "redeem",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_pool",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_supplyAsset",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_tokenOUt",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_collateral_amount",
+					"type": "uint256"
+				},
+				{
+					"internalType": "int256",
+					"name": "_amount",
+					"type": "int256"
+				},
+				{
+					"internalType": "address",
+					"name": "_user",
+					"type": "address"
+				},
+				{
+					"internalType": "uint24[]",
+					"name": "_route",
+					"type": "uint24[]"
+				}
+			],
+			"name": "uniBorrow",
 			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"

@@ -75,23 +75,23 @@ async function main() {
 
   // console.log("tokens approved",owner.address);
 
-
   // console.log(
   //   'balance of curv, sushi',
   //   await WETH.balanceOf(owner.address)
   //   // await Sushi.balanceOf(owner.address)
   // );
 
-  // await controller.compoundBorrow(
-  //   "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-  //   "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
-  //   "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
-  //   "500000000000000000",
-  //   "244625095",
-  //   owner.address
-  // );
+  await controller.compoundBorrow({
+    _supplyAsset: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
+    _borrowAsset: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+    _tokenOut: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
+    _supplyAmount: '500000000000000000',
+    _borrowAmount: '244625095',
+    _user: owner.address,
+    _route: [3000, 10000],
+  });
 
-  // console.log('borrowed successfully');
+  console.log('comp borrowed');
 
   // await controller.compoundBorrow(
   //   '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6',
@@ -104,37 +104,37 @@ async function main() {
 
   // console.log('borrowed successfully');
 
-  // await controller.reapay(
-  //   '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-  //   '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-  //   // '0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a',
-  //   owner.address,
-  //   '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
-  //   '500000000100000000',
-  //   '244625095'
-  // );
-  // console.log(address, "my contract address");
+  await controller.compRepay({
+    _borrowedToken: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+    _tokenIn: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+    _repayAmount: '244625095',
+    _route: [3000, 10000],
+  });
+  console.log('comp repaid');
 
-  // const coder = new ethers.AbiCoder();
-
-  await controller.uniBorrow({
-    _pool: '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
-    _supplyAsset: '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a',
-    _tokenOUt: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-    _collateral_amount: '10000000000000000000',
-    _amount: '200000000000000',
+  await controller.compRedeem({
     _user: owner.address,
+    _collateralToken: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
+    _collateralAmount: '5000000001000',
+    _tokenOut: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
     _route: [3000, 10000],
   });
 
-  console.log("borrowed");
+  console.log('comp redemeed');
 
-  // await encoded.test(
-  //   coder.encode(
-  //     ['address', 'uint256'],
-  //     ['0x172370d5Cd63279eFa6d502DAB29171933a610AF', 3000]
-  //   )
-  // );
+  // const coder = new ethers.AbiCoder();
+
+  // await controller.uniBorrow({
+  //   _pool: '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
+  //   _supplyAsset: '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a',
+  //   _tokenOUt: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+  //   _collateral_amount: '10000000000000000000',
+  //   _amount: '200000000000000',
+  //   _user: owner.address,
+  //   _route: [3000, 10000],
+  // });
+
+  // console.log('borrowed');
 
   // console.log(
   //   'borrowed',
@@ -144,34 +144,26 @@ async function main() {
   //   )
   // );
 
-  await controller.uniRepay({
-    _pool: '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
-    _tokenIn: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-    _user: owner.address,
-    _borrowAddress: '0x172370d5cd63279efa6d502dab29171933a610af',
-    _repayAmount: '1000000',
-    _route: [3000, 500],
-  });
+  // await controller.uniRepay({
+  //   _pool: '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
+  //   _tokenIn: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+  //   _user: owner.address,
+  //   _borrowAddress: '0x172370d5cd63279efa6d502dab29171933a610af',
+  //   _repayAmount: '10000',
+  //   _route: [500],
+  // });
 
-  // await controller.uniRedeem(
-  //   '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
-  //   '0x99A221a87b3C2238C90650fa9BE0F11e4c499D06',
-  //   '-1000000',
-  //   '0xc2132D05D31c914a87C6611C10748AEb04B58e8F'
-  // );
+  // console.log('repaid');
 
+  // await controller.uniRedeem({
+  //   _pool: '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
+  //   _user: '0x99A221a87b3C2238C90650fa9BE0F11e4c499D06',
+  //   _amount: '-1000000',
+  //   _tokenOut: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+  //   _route: [3000, 500],
+  // });
 
-  // const balance = await comet.collateralBalanceOf(
-  //   addresses,
-  //   '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'
-  // );
-
-  // const contractBalance = await comet.collateralBalanceOf(
-  //   addresses,
-  //   '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'
-  // );
-
-  // console.log('collateral balance of user', contractBalance);
+  // console.log('redeemed');
 
   console.log(
     'user balance of borrowAsset',

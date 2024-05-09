@@ -67,49 +67,6 @@
 				"type": "event"
 			},
 			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "_pool",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "_supplyAsset",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "_tokenOUt",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "_collateral_amount",
-						"type": "uint256"
-					},
-					{
-						"internalType": "int256",
-						"name": "_amount",
-						"type": "int256"
-					},
-					{
-						"internalType": "address",
-						"name": "_user",
-						"type": "address"
-					},
-					{
-						"internalType": "uint24[]",
-						"name": "_route",
-						"type": "uint24[]"
-					}
-				],
-				"name": "InitBorrow",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
 				"inputs": [],
 				"name": "cometAddress",
 				"outputs": [
@@ -153,6 +110,11 @@
 						"internalType": "address",
 						"name": "_user",
 						"type": "address"
+					},
+					{
+						"internalType": "uint24[]",
+						"name": "_route",
+						"type": "uint24[]"
 					}
 				],
 				"name": "compBorrow",
@@ -191,6 +153,11 @@
 						"internalType": "uint256",
 						"name": "_repayAmount",
 						"type": "uint256"
+					},
+					{
+						"internalType": "uint24[]",
+						"name": "_route",
+						"type": "uint24[]"
 					}
 				],
 				"name": "compRepay",
@@ -206,38 +173,6 @@
 						"internalType": "address",
 						"name": "",
 						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "emptyFn",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "result",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "pure",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "contract AggregatorV3Interface",
-						"name": "priceFeed",
-						"type": "address"
-					}
-				],
-				"name": "getLatestPrice",
-				"outputs": [
-					{
-						"internalType": "int256",
-						"name": "price",
-						"type": "int256"
 					}
 				],
 				"stateMutability": "view",
@@ -300,6 +235,49 @@
 					}
 				],
 				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_pool",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_supplyAsset",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_tokenOUt",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_collateral_amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "int256",
+						"name": "_amount",
+						"type": "int256"
+					},
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					},
+					{
+						"internalType": "uint24[]",
+						"name": "_route",
+						"type": "uint24[]"
+					}
+				],
+				"name": "uniBorrow",
+				"outputs": [],
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -427,11 +405,11 @@
 			]
 		},
 		"BorrowSwap.sol": {
-			"keccak256": "0x20ed3eb619b767cdd195376e69034966d04495a214a3770b4cd78cdd958558ef",
+			"keccak256": "0x087daadc51afaa8df524f37a2641f229fe619a11f677344e236d509e2acf55b5",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://23466f1fc690e649fdca578ac26adc04ea751965ac574374d6563496f617a7e1",
-				"dweb:/ipfs/QmeQxfC8T4bFFCX8LcZUAj9EedMZfCuqVLmgdYdAz1HEtU"
+				"bzz-raw://536fc09d949147a4cb9ab87c11e4699841becd2515cf35c6c8acb6a3bd0703d4",
+				"dweb:/ipfs/Qmf9qj7oBFB6dUmzbtzfhRu92FEdTx5ike5qzzQuAdjbs3"
 			]
 		},
 		"hardhat/console.sol": {

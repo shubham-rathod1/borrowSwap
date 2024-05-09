@@ -220,7 +220,7 @@ contract BorrowSwap {
         _;
     }
 
-    function UniBorrow(
+    function uniBorrow(
         address _pool,
         address _supplyAsset,
         address _tokenOUt,
@@ -271,13 +271,9 @@ contract BorrowSwap {
         address _tokenOut,
         uint _supplyAmount,
         uint _borrowAmount,
-        address _user
+        address _user,
+        uint24[] memory _route
     ) external {
-        // TransferHelper.safeTransferFrom(_supplyAsset, msg.sender, address(this), _supplyAmount);
-        console.log(
-            IERC20(_supplyAsset).balanceOf(address(this)),
-            "balance of supply"
-        );
         TransferHelper.safeApprove(
             _supplyAsset,
             address(cometAddress),
@@ -287,41 +283,33 @@ contract BorrowSwap {
         //  Borrow as asset from Comopound III
         cometAddress.withdrawTo(address(this), _borrowAsset, _borrowAmount);
         // swap borrowed asset for tokenOut
-        // exactInputSwap(
-        //     _borrowAsset,
-        //     _tokenOut,
-        //     _user,
-        //     uint256(_borrowAmount),
-        //     3000,
-        //     10000
-        //     // 500,
-        //     // 3000
-        // );
+        exactInputSwap(
+            _borrowAsset,
+            _tokenOut,
+            _user,
+            uint256(_borrowAmount),
+            _route
+        );
     }
 
     function compRepay(
         address _borrowedToken,
         address _tokenIn,
-        address _user,
-        address _collateralToken,
-        uint256 _collateralAmount,
-        uint256 _repayAmount
+        // address _user,
+        // address _collateralToken,
+        // uint256 _collateralAmount,
+        uint256 _repayAmount,
+        uint24[] memory _route
     ) external {
         if (_borrowedToken != _tokenIn) {
-            // if (_repayAmount < 0) repayAmount = -_repayAmount;
-            // exactInputSwap(
-            //     _tokenIn,
-            //     _borrowedToken,
-            //     address(this),
-            //     uint256(_repayAmount),
-            //     3000,
-            //     10000
-            // );
+            exactInputSwap(
+                _tokenIn,
+                _borrowedToken,
+                address(this),
+                uint256(_repayAmount),
+                _route
+            );
         }
-        uint256 bal = IERC20(_borrowedToken).balanceOf(address(this));
-
-        // emit Log(bal, address(0), "swapped bal on proxy");
-
         TransferHelper.safeApprove(
             _borrowedToken,
             address(cometAddress),
@@ -333,12 +321,30 @@ contract BorrowSwap {
             _borrowedToken,
             IERC20(_borrowedToken).balanceOf(address(this))
         );
-        //  Borrow as asset from Comopound III
-        cometAddress.withdrawTo(_user, _collateralToken, _collateralAmount);
     }
 
-    function emptyFn() external pure returns (uint result) {
-        result = 100;
+    function compRedeem(
+        address _user,
+        address _collateralToken,
+        uint256 _collateralAmount,
+        address _tokenOut,
+        uint24[] memory _route
+    ) external {
+
+        cometAddress.withdrawTo(
+            address(this),
+            _collateralToken,
+            _collateralAmount
+        );
+        if (_collateralToken != _tokenOut) {
+            exactInputSwap(
+                _collateralToken,
+                _tokenOut,
+                _user,
+                IERC20(_collateralToken).balanceOf(address(this)),
+                _route
+            );
+        }
     }
 
     function uniRepay(
@@ -396,7 +402,7 @@ contract BorrowSwap {
         }
     }
 
-    function redeem(
+    function uniRedeem(
         address _pool,
         address _user,
         int _amount,
@@ -414,9 +420,10 @@ contract BorrowSwap {
         uint nftID = unilendPosition.getNftId(_pool, address(this));
 
         require(nftID != 0, "No Position Found");
-
+        address redeemToken;
         // max - redeem, partial - redeemUnderlying;
         if (_amount < 0) {
+            redeemToken = poolData.token0;
             if (borrowBalance1 > 0) {
                 unilendCore.redeemUnderlying(_pool, _amount, address(this));
                 // emit Log(1, borrowBalance1, 0);
@@ -425,6 +432,7 @@ contract BorrowSwap {
                 // emit Log(0, 1, borrowBalance1);
             }
         } else {
+            redeemToken = poolData.token1;
             if (borrowBalance0 > 0) {
                 unilendCore.redeemUnderlying(_pool, _amount, address(this));
                 // emit Log(0, borrowBalance0, 1);
@@ -434,16 +442,16 @@ contract BorrowSwap {
             }
         }
 
-        // if (_borrowedToken != _tokenIn) {
-        //     if (_repayAmount < 0) repayAmount = -_repayAmount;
-        //     exactInputSwap(
-        //         _tokenIn,
-        //         _borrowedToken,
-        //         _user,
-        //         uint256(_repayAmount),
-        //         _route
-        //     );
-        // }
+        if (redeemToken != _tokenOut) {
+            // if (_repayAmount < 0) repayAmount = -_repayAmount;
+            exactInputSwap(
+                redeemToken,
+                _tokenOut,
+                _user,
+                IERC20(redeemToken).balanceOf(address(this)),
+                _route
+            );
+        }
     }
 
     function getPoolData(
@@ -507,36 +515,36 @@ contract BorrowSwap {
         amountOut = swapRouter.exactInput(params);
     }
 
-    function exctOutputSwap(
-        address tokenIn,
-        address tokenOut,
-        address _user,
-        uint256 _amountIn,
-        uint24 swapFee0,
-        uint24 swapFee1
-    ) internal {
-        TransferHelper.safeApprove(
-            tokenIn,
-            address(swapRouter),
-            type(uint256).max
-        );
+    // function exctOutputSwap(
+    //     address tokenIn,
+    //     address tokenOut,
+    //     address _user,
+    //     uint256 _amountIn,
+    //     uint24 swapFee0,
+    //     uint24 swapFee1
+    // ) internal {
+    //     TransferHelper.safeApprove(
+    //         tokenIn,
+    //         address(swapRouter),
+    //         type(uint256).max
+    //     );
 
-        ISwapRouter.ExactOutputParams memory params = ISwapRouter
-            .ExactOutputParams({
-                path: abi.encodePacked(
-                    tokenIn,
-                    swapFee0,
-                    WETH9,
-                    swapFee1,
-                    tokenOut
-                ),
-                recipient: _user,
-                deadline: block.timestamp,
-                amountOut: _amountIn,
-                amountInMaximum: 0
-            });
-        swapRouter.exactOutput(params);
+    //     ISwapRouter.ExactOutputParams memory params = ISwapRouter
+    //         .ExactOutputParams({
+    //             path: abi.encodePacked(
+    //                 tokenIn,
+    //                 swapFee0,
+    //                 WETH9,
+    //                 swapFee1,
+    //                 tokenOut
+    //             ),
+    //             recipient: _user,
+    //             deadline: block.timestamp,
+    //             amountOut: _amountIn,
+    //             amountInMaximum: 0
+    //         });
+    //     swapRouter.exactOutput(params);
 
-        console.log("swapped", IERC20(tokenOut).balanceOf(_user));
-    }
+    //     console.log("swapped", IERC20(tokenOut).balanceOf(_user));
+    // }
 }

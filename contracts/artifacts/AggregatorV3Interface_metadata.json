@@ -177,11 +177,11 @@
 			]
 		},
 		"BorrowSwap.sol": {
-			"keccak256": "0x20ed3eb619b767cdd195376e69034966d04495a214a3770b4cd78cdd958558ef",
+			"keccak256": "0x087daadc51afaa8df524f37a2641f229fe619a11f677344e236d509e2acf55b5",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://23466f1fc690e649fdca578ac26adc04ea751965ac574374d6563496f617a7e1",
-				"dweb:/ipfs/QmeQxfC8T4bFFCX8LcZUAj9EedMZfCuqVLmgdYdAz1HEtU"
+				"bzz-raw://536fc09d949147a4cb9ab87c11e4699841becd2515cf35c6c8acb6a3bd0703d4",
+				"dweb:/ipfs/Qmf9qj7oBFB6dUmzbtzfhRu92FEdTx5ike5qzzQuAdjbs3"
 			]
 		},
 		"hardhat/console.sol": {
