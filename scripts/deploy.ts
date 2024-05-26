@@ -73,14 +73,6 @@ async function main() {
   await USDT.approve(controller.target, '300000000000000');
   await WBTC.approve(controller.target, '1000000000000000000000000');
 
-  // console.log("tokens approved",owner.address);
-
-  // console.log(
-  //   'balance of curv, sushi',
-  //   await WETH.balanceOf(owner.address)
-  //   // await Sushi.balanceOf(owner.address)
-  // );
-
   await controller.compoundBorrow({
     _supplyAsset: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
     _borrowAsset: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
@@ -93,16 +85,6 @@ async function main() {
 
   console.log('comp borrowed');
 
-  // await controller.compoundBorrow(
-  //   '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6',
-  //   '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-  //   '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
-  //   '1000000',
-  //   '20000000',
-  //   owner.address
-  // );
-
-  // console.log('borrowed successfully');
 
   await controller.compRepay({
     _borrowedToken: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
@@ -124,17 +106,17 @@ async function main() {
 
   // const coder = new ethers.AbiCoder();
 
-  // await controller.uniBorrow({
-  //   _pool: '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
-  //   _supplyAsset: '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a',
-  //   _tokenOUt: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-  //   _collateral_amount: '10000000000000000000',
-  //   _amount: '200000000000000',
-  //   _user: owner.address,
-  //   _route: [3000, 10000],
-  // });
+  await controller.uniBorrow({
+    _pool: '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
+    _supplyAsset: '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a',
+    _tokenOUt: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+    _collateral_amount: '10000000000000000000',
+    _amount: '200000000000000',
+    _user: owner.address,
+    _route: [3000, 10000],
+  });
 
-  // console.log('borrowed');
+  console.log('uni borrowed');
 
   // console.log(
   //   'borrowed',
@@ -144,26 +126,26 @@ async function main() {
   //   )
   // );
 
-  // await controller.uniRepay({
-  //   _pool: '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
-  //   _tokenIn: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-  //   _user: owner.address,
-  //   _borrowAddress: '0x172370d5cd63279efa6d502dab29171933a610af',
-  //   _repayAmount: '10000',
-  //   _route: [500],
-  // });
+  await controller.uniRepay({
+    _pool: '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
+    _tokenIn: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+    _user: owner.address,
+    _borrowAddress: '0x172370d5cd63279efa6d502dab29171933a610af',
+    _repayAmount: '10000',
+    _route: [500],
+  });
 
-  // console.log('repaid');
+  console.log('uni repaid');
 
-  // await controller.uniRedeem({
-  //   _pool: '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
-  //   _user: '0x99A221a87b3C2238C90650fa9BE0F11e4c499D06',
-  //   _amount: '-1000000',
-  //   _tokenOut: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-  //   _route: [3000, 500],
-  // });
+  await controller.uniRedeem({
+    _pool: '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
+    _user: '0x99A221a87b3C2238C90650fa9BE0F11e4c499D06',
+    _amount: '-1000000',
+    _tokenOut: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+    _route: [3000, 500],
+  });
 
-  // console.log('redeemed');
+  console.log('uni redeemed');
 
   console.log(
     'user balance of borrowAsset',

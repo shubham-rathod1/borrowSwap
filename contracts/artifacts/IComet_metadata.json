@@ -9,91 +9,6 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "manager",
-						"type": "address"
-					},
-					{
-						"internalType": "bool",
-						"name": "isAllowed_",
-						"type": "bool"
-					}
-				],
-				"name": "allow",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "account",
-						"type": "address"
-					}
-				],
-				"name": "balanceOf",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "account",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "asset",
-						"type": "address"
-					}
-				],
-				"name": "collateralBalanceOf",
-				"outputs": [
-					{
-						"internalType": "uint128",
-						"name": "",
-						"type": "uint128"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "owner",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "manager",
-						"type": "address"
-					}
-				],
-				"name": "hasPermission",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
 						"name": "dst",
 						"type": "address"
 					},
@@ -109,81 +24,6 @@
 					}
 				],
 				"name": "supplyTo",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "dst",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "amount",
-						"type": "uint256"
-					}
-				],
-				"name": "transfer",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "dst",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "asset",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "amount",
-						"type": "uint256"
-					}
-				],
-				"name": "transferAsset",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "src",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "to",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "asset",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "amount",
-						"type": "uint256"
-					}
-				],
-				"name": "withdrawFrom",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -272,11 +112,11 @@
 			]
 		},
 		"BorrowSwap.sol": {
-			"keccak256": "0x087daadc51afaa8df524f37a2641f229fe619a11f677344e236d509e2acf55b5",
+			"keccak256": "0x6a8b91c7c904291c9a830a84990c7d13b197aea43307117aee32fd45afcdd797",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://536fc09d949147a4cb9ab87c11e4699841becd2515cf35c6c8acb6a3bd0703d4",
-				"dweb:/ipfs/Qmf9qj7oBFB6dUmzbtzfhRu92FEdTx5ike5qzzQuAdjbs3"
+				"bzz-raw://b0e4510a68fb30bb186acc03f6d49bc041a344fc7892683193bab637e632436c",
+				"dweb:/ipfs/Qmdw2uNnFWEqqtBJfKdjKwqHHgX3Mgi3jjrF1Zm8u1KqyL"
 			]
 		},
 		"hardhat/console.sol": {

@@ -2,8 +2,6 @@
 pragma solidity 0.8.20;
 
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
-import "hardhat/console.sol";
-
 interface ILogic {
     function compBorrow(
         address _supplyAsset,
@@ -32,6 +30,14 @@ interface ILogic {
         uint24[] memory _route
     ) external;
 
+    function uniRedeem(
+        address _pool,
+        address _user,
+        int _amount,
+        address _tokenOut,
+        uint24[] memory _route
+    ) external;
+
     function compRepay(
         address _borrowedToken,
         address _tokenIn,
@@ -43,14 +49,6 @@ interface ILogic {
         address _user,
         address _collateralToken,
         uint256 _collateralAmount,
-        address _tokenOut,
-        uint24[] memory _route
-    ) external;
-
-    function uniRedeem(
-        address _pool,
-        address _user,
-        int _amount,
         address _tokenOut,
         uint24[] memory _route
     ) external;
@@ -112,17 +110,17 @@ contract Controller {
     address public logicAddress;
     mapping(address => address) public proxyAddress;
 
+    event AccountCreated(address indexed user, address indexed proxyAddress);
+
     constructor(address _logicAddress) {
-        require(_logicAddress != address(0), "zero address");
+        require(_logicAddress != address(0), "zero address provided");
         logicAddress = _logicAddress;
     }
-
-    // call events here
 
     function createAccount() private returns (address contractAddress) {
         require(
             proxyAddress[msg.sender] == address(0),
-            "proxyAddress created for this user"
+            "Account already exists"
         );
         bytes20 targetBytes = bytes20(logicAddress); // Convert logicAddress to bytes20 for use in assembly block
 
@@ -143,6 +141,7 @@ contract Controller {
             } // Check creation status
         }
         proxyAddress[msg.sender] = contractAddress;
+        emit AccountCreated(msg.sender, contractAddress);
         return contractAddress;
     }
 

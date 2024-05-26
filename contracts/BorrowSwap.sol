@@ -5,8 +5,7 @@ pragma abicoder v2;
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "hardhat/console.sol";
-
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 interface IUnilendV2Core {
     function borrow(
         address _pool,
@@ -24,11 +23,6 @@ interface IUnilendV2Core {
         int _token_amount,
         address _receiver
     ) external returns (int);
-    function getOraclePrice(
-        address _token0,
-        address _token1,
-        uint _amount
-    ) external view returns (uint);
     function redeemUnderlying(
         address _pool,
         int _amount,
@@ -36,16 +30,7 @@ interface IUnilendV2Core {
     ) external returns (int);
 }
 interface IUnilendV2Position {
-    // struct nftPositionData {
-    //     address token0;
-    //     address token1;
-    //     uint lendBalance0;
-    //     uint borrowBalance0;
-    //     uint lendBalance1;
-    //     uint borrowBalance1;
-    // }
     function getNftId(address _pool, address _user) external returns (uint);
-    // function position(uint _nftID) external view returns (nftPositionData memory);
 }
 
 interface IUnilendPool {
@@ -104,59 +89,9 @@ interface IUnilendHelper {
 interface IComet {
     function supplyTo(address dst, address asset, uint amount) external;
     function withdrawTo(address to, address asset, uint amount) external;
-    function withdrawFrom(
-        address src,
-        address to,
-        address asset,
-        uint amount
-    ) external;
-    function balanceOf(address account) external view returns (uint256);
-    function collateralBalanceOf(
-        address account,
-        address asset
-    ) external view returns (uint128);
-    function allow(address manager, bool isAllowed_) external;
-    function hasPermission(
-        address owner,
-        address manager
-    ) external view returns (bool);
-    function transfer(address dst, uint amount) external returns (bool);
-    function transferAsset(address dst, address asset, uint amount) external;
 }
 
-interface AggregatorV3Interface {
-    function decimals() external view returns (uint8);
-
-    function description() external view returns (string memory);
-
-    function version() external view returns (uint256);
-
-    function getRoundData(
-        uint80 _roundId
-    )
-        external
-        view
-        returns (
-            uint80 roundId,
-            int256 answer,
-            uint256 startedAt,
-            uint256 updatedAt,
-            uint80 answeredInRound
-        );
-
-    function latestRoundData()
-        external
-        view
-        returns (
-            uint80 roundId,
-            int256 answer,
-            uint256 startedAt,
-            uint256 updatedAt,
-            uint80 answeredInRound
-        );
-}
-
-contract BorrowSwap {
+contract BorrowSwap is ReentrancyGuard {
     ISwapRouter public constant swapRouter =
         ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
     address constant WETH9 = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
@@ -169,7 +104,6 @@ contract BorrowSwap {
     IUnilendHelper public constant helper =
         IUnilendHelper(0x4F57c40D3dAA7BF2EC970Dd157B1268982158720);
     address public immutable controller;
-    // address public OracleAddress;
 
     event Borrowed(
         address indexed tokenAddress,
@@ -210,7 +144,6 @@ contract BorrowSwap {
         uint swapFee1;
         address tokenOut;
     }
-    // make constructor values hardcode and use init function
     constructor() {
         controller = msg.sender;
     }
@@ -223,46 +156,48 @@ contract BorrowSwap {
     function uniBorrow(
         address _pool,
         address _supplyAsset,
-        address _tokenOUt,
+        address _tokenOut,
         uint256 _collateral_amount,
         int256 _amount,
         address _user,
         uint24[] memory _route
-    ) external {
+    ) external nonReentrant {
         address token0 = IUnilendPool(_pool).token0();
         address token1 = IUnilendPool(_pool).token1();
         address borrowToken;
+        address recipient = address(this);
 
         if (_amount < 0) {
             borrowToken = token0;
         } else {
             borrowToken = token1;
         }
-
-        // approve lending protocol
+        if (borrowToken == _tokenOut) {
+            recipient = _user;
+        }
         TransferHelper.safeApprove(
             _supplyAsset,
             address(unilendCore),
             _collateral_amount
         );
-        // borrowing from lending protocol
         unilendCore.borrow(
             _pool,
             _amount,
             _collateral_amount,
-            payable(address(this))
+            payable(recipient)
         );
 
-        if (_amount < 0) _amount = -_amount;
-        // emit Log(decoded.fee0, decoded.fee1, 0);
+        if (borrowToken != _tokenOut) {
+            if (_amount < 0) _amount = -_amount;
 
-        exactInputSwap(
-            borrowToken,
-            _tokenOUt,
-            _user,
-            IERC20(borrowToken).balanceOf(address(this)),
-            _route
-        );
+            exactInputSwap(
+                borrowToken,
+                _tokenOut,
+                _user,
+                IERC20(borrowToken).balanceOf(address(this)),
+                _route
+            );
+        }
     }
 
     function compBorrow(
@@ -273,34 +208,37 @@ contract BorrowSwap {
         uint _borrowAmount,
         address _user,
         uint24[] memory _route
-    ) external {
+    ) external nonReentrant {
         TransferHelper.safeApprove(
             _supplyAsset,
             address(cometAddress),
             _supplyAmount
         );
-        cometAddress.supplyTo(address(this), _supplyAsset, _supplyAmount);
-        //  Borrow as asset from Comopound III
-        cometAddress.withdrawTo(address(this), _borrowAsset, _borrowAmount);
-        // swap borrowed asset for tokenOut
-        exactInputSwap(
-            _borrowAsset,
-            _tokenOut,
-            _user,
-            uint256(_borrowAmount),
-            _route
-        );
+        address recipient = address(this);
+        cometAddress.supplyTo(recipient, _supplyAsset, _supplyAmount);
+        if (_borrowAsset == _tokenOut) {
+            recipient = _user;
+        }
+        cometAddress.withdrawTo(recipient, _borrowAsset, _borrowAmount);
+
+        // if output is same as borrow skip swap
+        if (_borrowAsset != _tokenOut) {
+            exactInputSwap(
+                _borrowAsset,
+                _tokenOut,
+                _user,
+                uint256(_borrowAmount),
+                _route
+            );
+        }
     }
 
     function compRepay(
         address _borrowedToken,
         address _tokenIn,
-        // address _user,
-        // address _collateralToken,
-        // uint256 _collateralAmount,
         uint256 _repayAmount,
         uint24[] memory _route
-    ) external {
+    ) external nonReentrant {
         if (_borrowedToken != _tokenIn) {
             exactInputSwap(
                 _tokenIn,
@@ -329,13 +267,12 @@ contract BorrowSwap {
         uint256 _collateralAmount,
         address _tokenOut,
         uint24[] memory _route
-    ) external {
-
-        cometAddress.withdrawTo(
-            address(this),
-            _collateralToken,
-            _collateralAmount
-        );
+    ) external nonReentrant {
+        address recipient = address(this);
+        if (_collateralToken == _tokenOut) {
+            recipient = _user;
+        }
+        cometAddress.withdrawTo(recipient, _collateralToken, _collateralAmount);
         if (_collateralToken != _tokenOut) {
             exactInputSwap(
                 _collateralToken,
@@ -354,7 +291,7 @@ contract BorrowSwap {
         address _borrowAddress,
         uint256 _repayAmount,
         uint24[] memory _route
-    ) external {
+    ) external nonReentrant {
         int repayAmount;
         uint amountOut;
 
@@ -377,8 +314,6 @@ contract BorrowSwap {
             amountOut = _repayAmount;
         }
 
-        // emit Log(amountOut, 0, 0);
-
         TransferHelper.safeApprove(
             _borrowAddress,
             address(unilendCore),
@@ -386,9 +321,18 @@ contract BorrowSwap {
         );
 
         if (_borrowAddress == poolData.token0) {
-            repayAmount = -int(amountOut);
+            if (repayAmount > int(poolData.borrowBalance0)) {
+                repayAmount = -type(int).max;
+            } else {
+                repayAmount = -int(amountOut);
+            }
+            // repayAmount = -int(amountOut);
         } else {
-            repayAmount = int(amountOut);
+            if (repayAmount > int(poolData.borrowBalance1)) {
+                repayAmount = type(int).max;
+            } else {
+                repayAmount = int(amountOut);
+            }
         }
 
         unilendCore.repay(_pool, repayAmount, address(this));
@@ -408,7 +352,7 @@ contract BorrowSwap {
         int _amount,
         address _tokenOut,
         uint24[] memory _route
-    ) external {
+    ) external nonReentrant {
         PoolData memory poolData = getPoolData(
             _pool,
             address(this),
@@ -421,26 +365,32 @@ contract BorrowSwap {
 
         require(nftID != 0, "No Position Found");
         address redeemToken;
-        // max - redeem, partial - redeemUnderlying;
+        address recipient = address(this);
+        if (redeemToken == _tokenOut) {
+            recipient = _user;
+        }
+
         if (_amount < 0) {
             redeemToken = poolData.token0;
             if (borrowBalance1 > 0) {
-                unilendCore.redeemUnderlying(_pool, _amount, address(this));
+                unilendCore.redeemUnderlying(_pool, _amount, recipient);
                 // emit Log(1, borrowBalance1, 0);
             } else {
-                unilendCore.redeem(_pool, _amount, address(this));
+                unilendCore.redeem(_pool, _amount, recipient);
                 // emit Log(0, 1, borrowBalance1);
             }
         } else {
             redeemToken = poolData.token1;
             if (borrowBalance0 > 0) {
-                unilendCore.redeemUnderlying(_pool, _amount, address(this));
+                unilendCore.redeemUnderlying(_pool, _amount, recipient);
                 // emit Log(0, borrowBalance0, 1);
             } else {
-                unilendCore.redeem(_pool, _amount, address(this));
+                unilendCore.redeem(_pool, _amount, recipient);
                 // emit Log(1, 1, borrowBalance0);
             }
         }
+
+        // if swap is not skipped send redeem value to user
 
         if (redeemToken != _tokenOut) {
             // if (_repayAmount < 0) repayAmount = -_repayAmount;
@@ -514,37 +464,4 @@ contract BorrowSwap {
             });
         amountOut = swapRouter.exactInput(params);
     }
-
-    // function exctOutputSwap(
-    //     address tokenIn,
-    //     address tokenOut,
-    //     address _user,
-    //     uint256 _amountIn,
-    //     uint24 swapFee0,
-    //     uint24 swapFee1
-    // ) internal {
-    //     TransferHelper.safeApprove(
-    //         tokenIn,
-    //         address(swapRouter),
-    //         type(uint256).max
-    //     );
-
-    //     ISwapRouter.ExactOutputParams memory params = ISwapRouter
-    //         .ExactOutputParams({
-    //             path: abi.encodePacked(
-    //                 tokenIn,
-    //                 swapFee0,
-    //                 WETH9,
-    //                 swapFee1,
-    //                 tokenOut
-    //             ),
-    //             recipient: _user,
-    //             deadline: block.timestamp,
-    //             amountOut: _amountIn,
-    //             amountInMaximum: 0
-    //         });
-    //     swapRouter.exactOutput(params);
-
-    //     console.log("swapped", IERC20(tokenOut).balanceOf(_user));
-    // }
 }

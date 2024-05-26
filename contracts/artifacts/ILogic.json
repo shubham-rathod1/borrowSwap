@@ -50,9 +50,10 @@
 		"gasEstimates": null,
 		"methodIdentifiers": {
 			"compBorrow(address,address,address,uint256,uint256,address,uint24[])": "a36cc4cd",
-			"compRepay(address,address,address,address,uint256,uint256,uint24[])": "e2bdb2c6",
-			"redeem(address,address,int256,address,uint24[])": "687a1204",
+			"compRedeem(address,address,uint256,address,uint24[])": "baecbfcd",
+			"compRepay(address,address,uint256,uint24[])": "6b5e7305",
 			"uniBorrow(address,address,address,uint256,int256,address,uint24[])": "315a1451",
+			"uniRedeem(address,address,int256,address,uint24[])": "73e8f1fa",
 			"uniRepay(address,address,address,address,uint256,uint24[])": "b5c8b759"
 		}
 	},
@@ -104,16 +105,6 @@
 			"inputs": [
 				{
 					"internalType": "address",
-					"name": "_borrowedToken",
-					"type": "address"
-				},
-				{
-					"internalType": "address",
-					"name": "_tokenIn",
-					"type": "address"
-				},
-				{
-					"internalType": "address",
 					"name": "_user",
 					"type": "address"
 				},
@@ -128,6 +119,34 @@
 					"type": "uint256"
 				},
 				{
+					"internalType": "address",
+					"name": "_tokenOut",
+					"type": "address"
+				},
+				{
+					"internalType": "uint24[]",
+					"name": "_route",
+					"type": "uint24[]"
+				}
+			],
+			"name": "compRedeem",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_borrowedToken",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_tokenIn",
+					"type": "address"
+				},
+				{
 					"internalType": "uint256",
 					"name": "_repayAmount",
 					"type": "uint256"
@@ -139,39 +158,6 @@
 				}
 			],
 			"name": "compRepay",
-			"outputs": [],
-			"stateMutability": "nonpayable",
-			"type": "function"
-		},
-		{
-			"inputs": [
-				{
-					"internalType": "address",
-					"name": "_pool",
-					"type": "address"
-				},
-				{
-					"internalType": "address",
-					"name": "_user",
-					"type": "address"
-				},
-				{
-					"internalType": "int256",
-					"name": "_amount",
-					"type": "int256"
-				},
-				{
-					"internalType": "address",
-					"name": "_tokenOut",
-					"type": "address"
-				},
-				{
-					"internalType": "uint24[]",
-					"name": "_route",
-					"type": "uint24[]"
-				}
-			],
-			"name": "redeem",
 			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
@@ -215,6 +201,39 @@
 				}
 			],
 			"name": "uniBorrow",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_pool",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_user",
+					"type": "address"
+				},
+				{
+					"internalType": "int256",
+					"name": "_amount",
+					"type": "int256"
+				},
+				{
+					"internalType": "address",
+					"name": "_tokenOut",
+					"type": "address"
+				},
+				{
+					"internalType": "uint24[]",
+					"name": "_route",
+					"type": "uint24[]"
+				}
+			],
+			"name": "uniRedeem",
 			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"

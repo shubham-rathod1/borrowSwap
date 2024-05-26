@@ -22,16 +22,6 @@
 						"components": [
 							{
 								"internalType": "address",
-								"name": "_borrowedToken",
-								"type": "address"
-							},
-							{
-								"internalType": "address",
-								"name": "_tokenIn",
-								"type": "address"
-							},
-							{
-								"internalType": "address",
 								"name": "_user",
 								"type": "address"
 							},
@@ -44,6 +34,41 @@
 								"internalType": "uint256",
 								"name": "_collateralAmount",
 								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "_tokenOut",
+								"type": "address"
+							},
+							{
+								"internalType": "uint24[]",
+								"name": "_route",
+								"type": "uint24[]"
+							}
+						],
+						"internalType": "struct CompRedeem",
+						"name": "params",
+						"type": "tuple"
+					}
+				],
+				"name": "compRedeem",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "_borrowedToken",
+								"type": "address"
+							},
+							{
+								"internalType": "address",
+								"name": "_tokenIn",
+								"type": "address"
 							},
 							{
 								"internalType": "uint256",
@@ -328,11 +353,11 @@
 			]
 		},
 		"Controller.sol": {
-			"keccak256": "0xd0cefec33ce6edf29ea36cc1dee54db58a7a4e8978e43c27f6ab49f84c3739c6",
+			"keccak256": "0x92b569d09a0703616e349fa4cba1b95e8deddcdd338c36ed4a631d6a08eb63df",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://04f544b3f96895ea2823b888245e53af964512e2a1cb9e9ccb931e0a9dbe0e1a",
-				"dweb:/ipfs/QmQ7mjBxT7hy6s5u7HAR5fMBgafDCYFSBrQhk84cqaJk9e"
+				"bzz-raw://0bd6f1e78278bf8d8837e27cb027e1f1e6191aacc512206899a3ef6f2e8bd678",
+				"dweb:/ipfs/QmTseYHErA2WHpZB15yo1PKCPL5BWurMb4aq5jkfXFXkhg"
 			]
 		},
 		"hardhat/console.sol": {

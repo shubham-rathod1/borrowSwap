@@ -126,16 +126,6 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "_borrowedToken",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "_tokenIn",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
 						"name": "_user",
 						"type": "address"
 					},
@@ -148,6 +138,34 @@
 						"internalType": "uint256",
 						"name": "_collateralAmount",
 						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "_tokenOut",
+						"type": "address"
+					},
+					{
+						"internalType": "uint24[]",
+						"name": "_route",
+						"type": "uint24[]"
+					}
+				],
+				"name": "compRedeem",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_borrowedToken",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_tokenIn",
+						"type": "address"
 					},
 					{
 						"internalType": "uint256",
@@ -192,6 +210,62 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "swapRouter",
+				"outputs": [
+					{
+						"internalType": "contract ISwapRouter",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_pool",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_supplyAsset",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_tokenOut",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_collateral_amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "int256",
+						"name": "_amount",
+						"type": "int256"
+					},
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					},
+					{
+						"internalType": "uint24[]",
+						"name": "_route",
+						"type": "uint24[]"
+					}
+				],
+				"name": "uniBorrow",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -219,63 +293,7 @@
 						"type": "uint24[]"
 					}
 				],
-				"name": "redeem",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "swapRouter",
-				"outputs": [
-					{
-						"internalType": "contract ISwapRouter",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "_pool",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "_supplyAsset",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "_tokenOUt",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "_collateral_amount",
-						"type": "uint256"
-					},
-					{
-						"internalType": "int256",
-						"name": "_amount",
-						"type": "int256"
-					},
-					{
-						"internalType": "address",
-						"name": "_user",
-						"type": "address"
-					},
-					{
-						"internalType": "uint24[]",
-						"name": "_route",
-						"type": "uint24[]"
-					}
-				],
-				"name": "uniBorrow",
+				"name": "uniRedeem",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -405,11 +423,11 @@
 			]
 		},
 		"BorrowSwap.sol": {
-			"keccak256": "0x087daadc51afaa8df524f37a2641f229fe619a11f677344e236d509e2acf55b5",
+			"keccak256": "0x6a8b91c7c904291c9a830a84990c7d13b197aea43307117aee32fd45afcdd797",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://536fc09d949147a4cb9ab87c11e4699841becd2515cf35c6c8acb6a3bd0703d4",
-				"dweb:/ipfs/Qmf9qj7oBFB6dUmzbtzfhRu92FEdTx5ike5qzzQuAdjbs3"
+				"bzz-raw://b0e4510a68fb30bb186acc03f6d49bc041a344fc7892683193bab637e632436c",
+				"dweb:/ipfs/Qmdw2uNnFWEqqtBJfKdjKwqHHgX3Mgi3jjrF1Zm8u1KqyL"
 			]
 		},
 		"hardhat/console.sol": {
