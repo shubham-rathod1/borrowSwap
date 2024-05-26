@@ -160,26 +160,19 @@ contract BorrowSwap is ReentrancyGuard {
         uint256 _collateral_amount,
         int256 _amount,
         address _user,
-        uint24[] memory _route
+        uint24[] calldata _route
     ) external nonReentrant {
         address token0 = IUnilendPool(_pool).token0();
         address token1 = IUnilendPool(_pool).token1();
-        address borrowToken;
-        address recipient = address(this);
+        address borrowToken = _amount < 0 ? token0 : token1;
+        address recipient = borrowToken == _tokenOut ? _user : address(this);
 
-        if (_amount < 0) {
-            borrowToken = token0;
-        } else {
-            borrowToken = token1;
-        }
-        if (borrowToken == _tokenOut) {
-            recipient = _user;
-        }
-        TransferHelper.safeApprove(
+        safeApproveIfNeeded(
             _supplyAsset,
             address(unilendCore),
             _collateral_amount
         );
+
         unilendCore.borrow(
             _pool,
             _amount,
@@ -189,7 +182,6 @@ contract BorrowSwap is ReentrancyGuard {
 
         if (borrowToken != _tokenOut) {
             if (_amount < 0) _amount = -_amount;
-
             exactInputSwap(
                 borrowToken,
                 _tokenOut,
@@ -207,18 +199,13 @@ contract BorrowSwap is ReentrancyGuard {
         uint _supplyAmount,
         uint _borrowAmount,
         address _user,
-        uint24[] memory _route
+        uint24[] calldata _route
     ) external nonReentrant {
-        TransferHelper.safeApprove(
-            _supplyAsset,
-            address(cometAddress),
-            _supplyAmount
-        );
-        address recipient = address(this);
-        cometAddress.supplyTo(recipient, _supplyAsset, _supplyAmount);
-        if (_borrowAsset == _tokenOut) {
-            recipient = _user;
-        }
+        safeApproveIfNeeded(_supplyAsset, address(cometAddress), _supplyAmount);
+
+        cometAddress.supplyTo(address(this), _supplyAsset, _supplyAmount);
+        address recipient = _borrowAsset == _tokenOut ? _user : address(this);
+
         cometAddress.withdrawTo(recipient, _borrowAsset, _borrowAmount);
 
         // if output is same as borrow skip swap
@@ -237,28 +224,21 @@ contract BorrowSwap is ReentrancyGuard {
         address _borrowedToken,
         address _tokenIn,
         uint256 _repayAmount,
-        uint24[] memory _route
+        uint24[] calldata _route
     ) external nonReentrant {
-        if (_borrowedToken != _tokenIn) {
-            exactInputSwap(
+        uint amountOut = _borrowedToken != _tokenIn
+            ? exactInputSwap(
                 _tokenIn,
                 _borrowedToken,
                 address(this),
                 uint256(_repayAmount),
                 _route
-            );
-        }
-        TransferHelper.safeApprove(
-            _borrowedToken,
-            address(cometAddress),
-            type(uint256).max
-        );
+            )
+            : _repayAmount;
 
-        cometAddress.supplyTo(
-            address(this),
-            _borrowedToken,
-            IERC20(_borrowedToken).balanceOf(address(this))
-        );
+        safeApproveIfNeeded(_borrowedToken, address(cometAddress), amountOut);
+
+        cometAddress.supplyTo(address(this), _borrowedToken, amountOut);
     }
 
     function compRedeem(
@@ -266,12 +246,11 @@ contract BorrowSwap is ReentrancyGuard {
         address _collateralToken,
         uint256 _collateralAmount,
         address _tokenOut,
-        uint24[] memory _route
+        uint24[] calldata _route
     ) external nonReentrant {
-        address recipient = address(this);
-        if (_collateralToken == _tokenOut) {
-            recipient = _user;
-        }
+        address recipient = _collateralToken == _tokenOut
+            ? _user
+            : address(this);
         cometAddress.withdrawTo(recipient, _collateralToken, _collateralAmount);
         if (_collateralToken != _tokenOut) {
             exactInputSwap(
@@ -290,45 +269,36 @@ contract BorrowSwap is ReentrancyGuard {
         address _user,
         address _borrowAddress,
         uint256 _repayAmount,
-        uint24[] memory _route
+        uint24[] calldata _route
     ) external nonReentrant {
         int repayAmount;
-        uint amountOut;
+        // uint amountOut;
 
         PoolData memory poolData = getPoolData(
             _pool,
             address(this),
             address(unilendPosition)
         );
-
-        // swap for borrowed token
-        if (_borrowAddress != _tokenIn) {
-            amountOut = exactInputSwap(
+        uint amountOut = _borrowAddress != _tokenIn
+            ? exactInputSwap(
                 _tokenIn,
                 _borrowAddress,
                 address(this),
                 uint256(_repayAmount),
                 _route
-            );
-        } else {
-            amountOut = _repayAmount;
-        }
+            )
+            : _repayAmount;
 
-        TransferHelper.safeApprove(
-            _borrowAddress,
-            address(unilendCore),
-            type(uint256).max
-        );
+        safeApproveIfNeeded(_borrowAddress, address(unilendCore), amountOut);
 
         if (_borrowAddress == poolData.token0) {
-            if (repayAmount > int(poolData.borrowBalance0)) {
+            if (repayAmount >= int(poolData.borrowBalance0)) {
                 repayAmount = -type(int).max;
             } else {
                 repayAmount = -int(amountOut);
             }
-            // repayAmount = -int(amountOut);
         } else {
-            if (repayAmount > int(poolData.borrowBalance1)) {
+            if (repayAmount >= int(poolData.borrowBalance1)) {
                 repayAmount = type(int).max;
             } else {
                 repayAmount = int(amountOut);
@@ -337,11 +307,14 @@ contract BorrowSwap is ReentrancyGuard {
 
         unilendCore.repay(_pool, repayAmount, address(this));
 
-        if (IERC20(_borrowAddress).balanceOf(address(this)) > 0) {
+        uint256 remainingBalance = IERC20(_borrowAddress).balanceOf(
+            address(this)
+        );
+        if (remainingBalance > 0) {
             TransferHelper.safeTransfer(
                 _borrowAddress,
                 _user,
-                IERC20(_borrowAddress).balanceOf(address(this))
+                remainingBalance
             );
         }
     }
@@ -351,49 +324,39 @@ contract BorrowSwap is ReentrancyGuard {
         address _user,
         int _amount,
         address _tokenOut,
-        uint24[] memory _route
+        uint24[] calldata _route
     ) external nonReentrant {
         PoolData memory poolData = getPoolData(
             _pool,
             address(this),
             address(unilendPosition)
         );
-        uint borrowBalance0 = poolData.borrowBalance0;
-        uint borrowBalance1 = poolData.borrowBalance1;
 
         uint nftID = unilendPosition.getNftId(_pool, address(this));
-
         require(nftID != 0, "No Position Found");
+
         address redeemToken;
         address recipient = address(this);
-        if (redeemToken == _tokenOut) {
-            recipient = _user;
-        }
 
         if (_amount < 0) {
             redeemToken = poolData.token0;
-            if (borrowBalance1 > 0) {
+            recipient = redeemToken == _tokenOut ? _user : address(this);
+            if (poolData.borrowBalance1 > 0) {
                 unilendCore.redeemUnderlying(_pool, _amount, recipient);
-                // emit Log(1, borrowBalance1, 0);
             } else {
                 unilendCore.redeem(_pool, _amount, recipient);
-                // emit Log(0, 1, borrowBalance1);
             }
         } else {
             redeemToken = poolData.token1;
-            if (borrowBalance0 > 0) {
+            recipient = redeemToken == _tokenOut ? _user : address(this);
+            if (poolData.borrowBalance0 > 0) {
                 unilendCore.redeemUnderlying(_pool, _amount, recipient);
-                // emit Log(0, borrowBalance0, 1);
             } else {
                 unilendCore.redeem(_pool, _amount, recipient);
-                // emit Log(1, 1, borrowBalance0);
             }
         }
 
-        // if swap is not skipped send redeem value to user
-
         if (redeemToken != _tokenOut) {
-            // if (_repayAmount < 0) repayAmount = -_repayAmount;
             exactInputSwap(
                 redeemToken,
                 _tokenOut,
@@ -424,7 +387,6 @@ contract BorrowSwap is ReentrancyGuard {
         poolData.borrowBalance1 = fullData._borrowBalance1;
         poolData.lendBalance0 = fullData._lendBalance0;
         poolData.lendBalance1 = fullData._lendBalance1;
-        poolData.token0 = data._token0;
     }
 
     function exactInputSwap(
@@ -432,16 +394,27 @@ contract BorrowSwap is ReentrancyGuard {
         address tokenOut,
         address _user,
         uint256 _amountIn,
-        uint24[] memory _route
-    )
-        internal
-        returns (
-            // bytes calldata route
-            uint256 amountOut
-        )
-    {
+        uint24[] calldata _route
+    ) internal returns (uint256 amountOut) {
         TransferHelper.safeApprove(tokenIn, address(swapRouter), _amountIn);
-        bytes memory path;
+        bytes memory path = buildSwapPath(tokenIn, tokenOut, _route);
+
+        ISwapRouter.ExactInputParams memory params = ISwapRouter
+            .ExactInputParams({
+                path: path,
+                recipient: _user,
+                deadline: block.timestamp,
+                amountIn: _amountIn,
+                amountOutMinimum: 0
+            });
+        amountOut = swapRouter.exactInput(params);
+    }
+
+    function buildSwapPath(
+        address tokenIn,
+        address tokenOut,
+        uint24[] calldata _route
+    ) internal pure returns (bytes memory path) {
         if (_route.length > 1) {
             path = abi.encodePacked(
                 tokenIn,
@@ -453,15 +426,16 @@ contract BorrowSwap is ReentrancyGuard {
         } else {
             path = abi.encodePacked(tokenIn, _route[0], tokenOut);
         }
+    }
 
-        ISwapRouter.ExactInputParams memory params = ISwapRouter
-            .ExactInputParams({
-                path: path,
-                recipient: _user,
-                deadline: block.timestamp,
-                amountIn: _amountIn,
-                amountOutMinimum: 0
-            });
-        amountOut = swapRouter.exactInput(params);
+    function safeApproveIfNeeded(
+        address token,
+        address spender,
+        uint256 amount
+    ) internal {
+        uint256 allowance = IERC20(token).allowance(address(this), spender);
+        if (allowance < amount) {
+            TransferHelper.safeApprove(token, spender, type(uint256).max);
+        }
     }
 }
