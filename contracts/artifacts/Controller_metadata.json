@@ -17,6 +17,25 @@
 				"type": "constructor"
 			},
 			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "proxyAddress",
+						"type": "address"
+					}
+				],
+				"name": "AccountCreated",
+				"type": "event"
+			},
+			{
 				"inputs": [
 					{
 						"components": [
@@ -353,19 +372,11 @@
 			]
 		},
 		"Controller.sol": {
-			"keccak256": "0x92b569d09a0703616e349fa4cba1b95e8deddcdd338c36ed4a631d6a08eb63df",
+			"keccak256": "0x95ead0f0f9e44ff6e028913fc008e122ccc72a9428d7a9451c157c10d14011fd",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://0bd6f1e78278bf8d8837e27cb027e1f1e6191aacc512206899a3ef6f2e8bd678",
-				"dweb:/ipfs/QmTseYHErA2WHpZB15yo1PKCPL5BWurMb4aq5jkfXFXkhg"
-			]
-		},
-		"hardhat/console.sol": {
-			"keccak256": "0x7434453e6d3b7d0e5d0eb7846ffdbc27f0ccf3b163591263739b628074dc103a",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://49355f780520494d1d5a0f01858385e51bb5280ce0ecfb960f16995065dca395",
-				"dweb:/ipfs/QmSwJ6C5QLz6xKeQZS8wbwjU1KxRFTYfwbGmtzisd5sRW4"
+				"bzz-raw://1392a64244637fd0cebe1d810d9fca4a5f19976071d0adc884d3d4d2ab3a21d9",
+				"dweb:/ipfs/QmeBdGzTazauMpkp5WCj9FxrV6xssN5jbZrqkM3B2VQC7a"
 			]
 		}
 	},

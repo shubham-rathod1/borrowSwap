@@ -50,7 +50,6 @@
 		"gasEstimates": null,
 		"methodIdentifiers": {
 			"borrow(address,int256,uint256,address)": "8dee9460",
-			"getOraclePrice(address,address,uint256)": "94a76cbb",
 			"redeem(address,int256,address)": "5833cdf9",
 			"redeemUnderlying(address,int256,address)": "e96466d0",
 			"repay(address,int256,address)": "82626547"
@@ -83,35 +82,6 @@
 			"name": "borrow",
 			"outputs": [],
 			"stateMutability": "nonpayable",
-			"type": "function"
-		},
-		{
-			"inputs": [
-				{
-					"internalType": "address",
-					"name": "_token0",
-					"type": "address"
-				},
-				{
-					"internalType": "address",
-					"name": "_token1",
-					"type": "address"
-				},
-				{
-					"internalType": "uint256",
-					"name": "_amount",
-					"type": "uint256"
-				}
-			],
-			"name": "getOraclePrice",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "",
-					"type": "uint256"
-				}
-			],
-			"stateMutability": "view",
 			"type": "function"
 		},
 		{

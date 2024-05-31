@@ -107,7 +107,7 @@ struct CompRedeem {
 }
 
 contract Controller {
-    address public logicAddress;
+    address public immutable logicAddress;
     mapping(address => address) public proxyAddress;
 
     event AccountCreated(address indexed user, address indexed proxyAddress);

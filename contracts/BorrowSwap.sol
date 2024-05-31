@@ -91,7 +91,7 @@ interface IComet {
     function withdrawTo(address to, address asset, uint amount) external;
 }
 
-contract BorrowSwap is ReentrancyGuard {
+contract Logic is ReentrancyGuard {
     ISwapRouter public constant swapRouter =
         ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
     address constant WETH9 = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
@@ -153,6 +153,17 @@ contract BorrowSwap is ReentrancyGuard {
         _;
     }
 
+    /**
+     * @notice Borrow tokens from Unilend and optionally swap them to another token.
+     * @param _pool The Unilend pool address.
+     * @param _supplyAsset The address of the asset to supply as collateral.
+     * @param _tokenOut The address of the token to receive.
+     * @param _collateral_amount The amount of collateral to supply.
+     * @param _amount The amount to borrow (negative for token0, positive for token1).
+     * @param _user The address of the user.
+     * @param _route The Uniswap fee route.
+     */
+
     function uniBorrow(
         address _pool,
         address _supplyAsset,
@@ -182,15 +193,20 @@ contract BorrowSwap is ReentrancyGuard {
 
         if (borrowToken != _tokenOut) {
             if (_amount < 0) _amount = -_amount;
-            exactInputSwap(
-                borrowToken,
-                _tokenOut,
-                _user,
-                IERC20(borrowToken).balanceOf(address(this)),
-                _route
-            );
+            exactInputSwap(borrowToken, _tokenOut, _user, uint(_amount), _route);
         }
     }
+
+    /**
+     * @notice Supply asset to Comet and borrow another asset, optionally swapping it.
+     * @param _supplyAsset The address of the asset to supply.
+     * @param _borrowAsset The address of the asset to borrow.
+     * @param _tokenOut The address of the token to receive.
+     * @param _supplyAmount The amount of the asset to supply.
+     * @param _borrowAmount The amount of the asset to borrow.
+     * @param _user The address of the user.
+     * @param _route The Uniswap fee route.
+     */
 
     function compBorrow(
         address _supplyAsset,
@@ -220,6 +236,14 @@ contract BorrowSwap is ReentrancyGuard {
         }
     }
 
+    /**
+     * @notice Repay borrowed asset to Comet, optionally swapping it from another token.
+     * @param _borrowedToken The address of the borrowed token.
+     * @param _tokenIn The address of the token to swap from.
+     * @param _repayAmount The amount to repay.
+     * @param _route The Uniswap fee route.
+     */
+
     function compRepay(
         address _borrowedToken,
         address _tokenIn,
@@ -241,6 +265,15 @@ contract BorrowSwap is ReentrancyGuard {
         cometAddress.supplyTo(address(this), _borrowedToken, amountOut);
     }
 
+    /**
+     * @notice Redeem collateral from Comet, optionally swapping it to another token.
+     * @param _user The address of the user.
+     * @param _collateralToken The address of the collateral token.
+     * @param _collateralAmount The amount of collateral to redeem.
+     * @param _tokenOut The address of the token to receive.
+     * @param _route The Uniswap fee route.
+     */
+    // to do: calculate the totak collateral to be redeemed here and do not use all account balance for redeem.
     function compRedeem(
         address _user,
         address _collateralToken,
@@ -263,6 +296,16 @@ contract BorrowSwap is ReentrancyGuard {
         }
     }
 
+    /**
+     * @notice Repay borrowed tokens to Unilend, optionally swapping them from another token.
+     * @param _pool The Unilend pool address.
+     * @param _tokenIn The address of the token to swap from.
+     * @param _user The address of the user.
+     * @param _borrowAddress The address of the borrowed token.
+     * @param _repayAmount The amount to repay.
+     * @param _route The Uniswap fee route.
+     */
+
     function uniRepay(
         address _pool,
         address _tokenIn,
@@ -271,9 +314,7 @@ contract BorrowSwap is ReentrancyGuard {
         uint256 _repayAmount,
         uint24[] calldata _route
     ) external nonReentrant {
-        int repayAmount;
-        // uint amountOut;
-
+        int repayAmountInt;
         PoolData memory poolData = getPoolData(
             _pool,
             address(this),
@@ -292,20 +333,16 @@ contract BorrowSwap is ReentrancyGuard {
         safeApproveIfNeeded(_borrowAddress, address(unilendCore), amountOut);
 
         if (_borrowAddress == poolData.token0) {
-            if (repayAmount >= int(poolData.borrowBalance0)) {
-                repayAmount = -type(int).max;
-            } else {
-                repayAmount = -int(amountOut);
-            }
+            repayAmountInt = amountOut >= poolData.borrowBalance0
+                ? -type(int).max
+                : -int(amountOut);
         } else {
-            if (repayAmount >= int(poolData.borrowBalance1)) {
-                repayAmount = type(int).max;
-            } else {
-                repayAmount = int(amountOut);
-            }
+            repayAmountInt = amountOut >= poolData.borrowBalance1
+                ? type(int).max
+                : int(amountOut);
         }
 
-        unilendCore.repay(_pool, repayAmount, address(this));
+        unilendCore.repay(_pool, repayAmountInt, address(this));
 
         uint256 remainingBalance = IERC20(_borrowAddress).balanceOf(
             address(this)
@@ -318,6 +355,15 @@ contract BorrowSwap is ReentrancyGuard {
             );
         }
     }
+
+    /**
+     * @notice Redeem tokens from Unilend, optionally swapping them to another token.
+     * @param _pool The Unilend pool address.
+     * @param _user The address of the user.
+     * @param _amount The amount to redeem (negative for token0, positive for token1).
+     * @param _tokenOut The address of the token to receive.
+     * @param _route The Uniswap fee route.
+     */
 
     function uniRedeem(
         address _pool,
@@ -367,6 +413,14 @@ contract BorrowSwap is ReentrancyGuard {
         }
     }
 
+    /**
+     * @notice Internal function to get pool data from Unilend.
+     * @param _pool The Unilend pool address.
+     * @param _user The address of the user.
+     * @param _unilendPosition The address of the Unilend position contract.
+     * @return poolData The pool data struct.
+     */
+
     function getPoolData(
         address _pool,
         address _user,
@@ -388,6 +442,16 @@ contract BorrowSwap is ReentrancyGuard {
         poolData.lendBalance0 = fullData._lendBalance0;
         poolData.lendBalance1 = fullData._lendBalance1;
     }
+
+    /**
+     * @notice Internal function to execute a Uniswap exact input swap.
+     * @param tokenIn The address of the token to swap from.
+     * @param tokenOut The address of the token to swap to.
+     * @param _user The address of the user to receive the output tokens.
+     * @param _amountIn The amount of input tokens to swap.
+     * @param _route The Uniswap fee route.
+     * @return amountOut The amount of output tokens received.
+     */
 
     function exactInputSwap(
         address tokenIn,

@@ -9,7 +9,7 @@ import cometAbi from '../abis/comet.json';
 async function main() {
   const [owner, otherAccount] = await ethers.getSigners();
 
-  const borrowSwap = await ethers.deployContract('BorrowSwap');
+  const borrowSwap = await ethers.deployContract('Logic');
   await borrowSwap.waitForDeployment();
 
   const controller = await ethers.deployContract('Controller', [
