@@ -239,8 +239,8 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": true,
-			"runs": 1000
+			"enabled": false,
+			"runs": 200
 		},
 		"remappings": []
 	},
@@ -286,11 +286,11 @@
 			]
 		},
 		"BorrowSwap.sol": {
-			"keccak256": "0x45166fd4dd73ebfa60049e9522dbec9184ebbf7000c55a35bc5e5200d4ea51ef",
+			"keccak256": "0xcf0ea7fd38f90601d028de3b3c656812b57d9761e79dc73f1890a273c6f1fbf8",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://fb31e3367f8fde975472d7a356f2d05987f8f0975066a507c485c2c2751c7329",
-				"dweb:/ipfs/QmUoKqLKu6rHm3DVbpEXBpqPbV9GZczu35hWvsdbsWe7MC"
+				"bzz-raw://503a941f753a014b3fde1611eae06a2fdf219321318c386eb34ec00b81a13674",
+				"dweb:/ipfs/QmQjwq8SuKepzxzEczaDpBBZsS4X9EACagv3ZBS5uQebWn"
 			]
 		}
 	},

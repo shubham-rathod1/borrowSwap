@@ -458,7 +458,7 @@ contract Logic is ReentrancyGuard {
         address tokenOut,
         address _user,
         uint256 _amountIn,
-        uint24[] calldata _route
+            uint24[] calldata _route
     ) internal returns (uint256 amountOut) {
         TransferHelper.safeApprove(tokenIn, address(swapRouter), _amountIn);
         bytes memory path = buildSwapPath(tokenIn, tokenOut, _route);
