@@ -8,22 +8,27 @@ const config: HardhatUserConfig = {
     compilers: [
       {
         version: '0.8.20',
-      },
-      // {
-      //   version: '0.7.6',
-      // },
+      }
     ],
+    settings: {
+      optimizer: {
+        enabled: true,
+        // runs: 1000,
+      },
+      viaIR: true,
+    },
   },
   networks: {
     buildbear: {
-      // url: 'https://rpc.buildbear.io/powerful-vision-50dcd8b1',
+      // url: 'https://rpc.buildbear.io/subjective-warpath-cccfa139',
       url: 'https://rpc.buildbear.io/arrogant-karma-142e6ce5',
-      // url: 'https://polygon-mainnet.g.alchemy.com/v2/lGRIjTUZouUNPNZoyjSAFlVL0f-kvJRK',
+
+      // url: 'https://rpc.buildbear.io/purring-magik-d55eb717',
       accounts: [process.env.WALLET_SECRET || ''],
     },
     hardhat: {
       forking: {
-        url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API}`,
+        url: `https://polygon-mainnet.g.alchemy.com/v2/lGRIjTUZouUNPNZoyjSAFlVL0f-kvJRK`,
         enabled: true,
       },
     },
@@ -37,10 +42,9 @@ const config: HardhatUserConfig = {
         network: 'buildbear',
         chainId: 18401,
         urls: {
-          apiURL:
-            'https://rpc.buildbear.io/verify/etherscan/arrogant-karma-142e6ce5',
-          browserURL:
-            'https://explorer.buildbear.io/arrogant-karma-142e6ce5',
+          // apiURL: 'https://rpc.buildbear.io/dual-carnage-effb3e55',
+          apiURL: 'https://rpc.buildbear.io/arrogant-karma-142e6ce5',
+          browserURL: 'https://explorer.buildbear.io/arrogant-karma-142e6ce5/transactions',
         },
       },
     ],
