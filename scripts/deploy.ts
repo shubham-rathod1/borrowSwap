@@ -69,13 +69,6 @@ async function main() {
   //   // await Sushi.balanceOf(owner.address)
   // );
 
-  // await borrowSwap.compBorrow(
-  //   '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
-  //   '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-  //   '1000000000000000000',
-  //   '200000000'
-  // );
-
   await controller.compoundBorrow(
     '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
     '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
@@ -103,14 +96,6 @@ async function main() {
 
   // calling init to intiate borrow swap
 
-  // await borrowSwap.InitBorrow(
-  //   '0x784c4a12f82204e5fb713b055de5e8008d5916b6',
-  //   '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a',
-  //   '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-  //   '0x172370d5cd63279efa6d502dab29171933a610af',
-  //   '1000000000000000000',
-  //   '1000000000000000'
-  // );
 }
 
 // We recommend this pattern to be able to use async/await everywhere
