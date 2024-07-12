@@ -21,7 +21,7 @@ const config: HardhatUserConfig = {
   networks: {
     buildbear: {
       // url: 'https://rpc.buildbear.io/subjective-warpath-cccfa139',
-      url: 'https://rpc.buildbear.io/arrogant-karma-142e6ce5',
+      url: 'https://rpc.buildbear.io/liable-cannonball-812580a5',
 
       // url: 'https://rpc.buildbear.io/purring-magik-d55eb717',
       accounts: [process.env.WALLET_SECRET || ''],
@@ -40,11 +40,11 @@ const config: HardhatUserConfig = {
     customChains: [
       {
         network: 'buildbear',
-        chainId: 18401,
+        chainId: 18731,
         urls: {
           // apiURL: 'https://rpc.buildbear.io/dual-carnage-effb3e55',
-          apiURL: 'https://rpc.buildbear.io/arrogant-karma-142e6ce5',
-          browserURL: 'https://explorer.buildbear.io/arrogant-karma-142e6ce5/transactions',
+          apiURL: 'https://rpc.buildbear.io/liable-cannonball-812580a5',
+          browserURL: 'https://rpc.buildbear.io/liable-cannonball-812580a5/transactions',
         },
       },
     ],
