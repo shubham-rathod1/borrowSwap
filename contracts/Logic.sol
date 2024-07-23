@@ -103,7 +103,7 @@ contract Logic is ReentrancyGuard {
         IComet(0xF25212E676D1F7F89Cd72fFEe66158f541246445);
     IUnilendHelper public constant helper =
         IUnilendHelper(0x4F57c40D3dAA7BF2EC970Dd157B1268982158720);
-    address public immutable controller;
+    // address public immutable controller;
 
     event Borrowed(
         address indexed tokenAddress,
@@ -145,13 +145,13 @@ contract Logic is ReentrancyGuard {
         address tokenOut;
     }
     constructor() {
-        controller = msg.sender;
+        // controller = msg.sender;
     }
 
-    modifier onlyController() {
-        require(controller == msg.sender, "Not Controller");
-        _;
-    }
+    // modifier onlyController() {
+    //     require(controller == msg.sender, "Not Controller");
+    //     _;
+    // }
 
     /**
      * @notice Borrow tokens from Unilend and optionally swap them to another token.
