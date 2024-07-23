@@ -103,7 +103,7 @@ contract Logic is ReentrancyGuard {
         IComet(0xF25212E676D1F7F89Cd72fFEe66158f541246445);
     IUnilendHelper public constant helper =
         IUnilendHelper(0x4F57c40D3dAA7BF2EC970Dd157B1268982158720);
-    // address public immutable controller;
+    address public controller;
 
     event Borrowed(
         address indexed tokenAddress,
@@ -145,13 +145,23 @@ contract Logic is ReentrancyGuard {
         address tokenOut;
     }
     constructor() {
-        // controller = msg.sender;
+        controller = msg.sender;
     }
 
-    // modifier onlyController() {
-    //     require(controller == msg.sender, "Not Controller");
-    //     _;
-    // }
+    modifier onlyController() {
+        require(controller == msg.sender, "Caller is not the controller");
+        _;
+    }
+
+    /**
+     * @dev Initializes the contract by setting the controller address.
+     * @param _controller The address of the controller.
+     */
+    function initialize(address _controller) external {
+        require(controller == address(0), "Already initialized");
+        require(_controller != address(0), "Controller address cannot be zero");
+        controller = _controller;
+    }
 
     /**
      * @notice Borrow tokens from Unilend and optionally swap them to another token.
@@ -172,7 +182,7 @@ contract Logic is ReentrancyGuard {
         int256 _amount,
         address _user,
         uint24[] calldata _route
-    ) external nonReentrant {
+    ) external nonReentrant onlyController {
         address token0 = IUnilendPool(_pool).token0();
         address token1 = IUnilendPool(_pool).token1();
         address borrowToken = _amount < 0 ? token0 : token1;
@@ -193,7 +203,13 @@ contract Logic is ReentrancyGuard {
 
         if (borrowToken != _tokenOut) {
             if (_amount < 0) _amount = -_amount;
-            exactInputSwap(borrowToken, _tokenOut, _user, uint(_amount), _route);
+            exactInputSwap(
+                borrowToken,
+                _tokenOut,
+                _user,
+                uint(_amount),
+                _route
+            );
         }
     }
 
@@ -216,7 +232,7 @@ contract Logic is ReentrancyGuard {
         uint _borrowAmount,
         address _user,
         uint24[] calldata _route
-    ) external nonReentrant {
+    ) external nonReentrant onlyController {
         safeApproveIfNeeded(_supplyAsset, address(cometAddress), _supplyAmount);
 
         cometAddress.supplyTo(address(this), _supplyAsset, _supplyAmount);
@@ -249,7 +265,7 @@ contract Logic is ReentrancyGuard {
         address _tokenIn,
         uint256 _repayAmount,
         uint24[] calldata _route
-    ) external nonReentrant {
+    ) external nonReentrant onlyController {
         uint amountOut = _borrowedToken != _tokenIn
             ? exactInputSwap(
                 _tokenIn,
@@ -280,7 +296,7 @@ contract Logic is ReentrancyGuard {
         uint256 _collateralAmount,
         address _tokenOut,
         uint24[] calldata _route
-    ) external nonReentrant {
+    ) external nonReentrant onlyController {
         address recipient = _collateralToken == _tokenOut
             ? _user
             : address(this);
@@ -313,7 +329,7 @@ contract Logic is ReentrancyGuard {
         address _borrowAddress,
         uint256 _repayAmount,
         uint24[] calldata _route
-    ) external nonReentrant {
+    ) external nonReentrant onlyController {
         int repayAmountInt;
         PoolData memory poolData = getPoolData(
             _pool,
@@ -371,7 +387,7 @@ contract Logic is ReentrancyGuard {
         int _amount,
         address _tokenOut,
         uint24[] calldata _route
-    ) external nonReentrant {
+    ) external nonReentrant onlyController {
         PoolData memory poolData = getPoolData(
             _pool,
             address(this),
@@ -458,7 +474,7 @@ contract Logic is ReentrancyGuard {
         address tokenOut,
         address _user,
         uint256 _amountIn,
-            uint24[] calldata _route
+        uint24[] calldata _route
     ) internal returns (uint256 amountOut) {
         TransferHelper.safeApprove(tokenIn, address(swapRouter), _amountIn);
         bytes memory path = buildSwapPath(tokenIn, tokenOut, _route);

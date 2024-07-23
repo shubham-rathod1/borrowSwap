@@ -8,7 +8,7 @@ const config: HardhatUserConfig = {
     compilers: [
       {
         version: '0.8.20',
-      }
+      },
     ],
     settings: {
       optimizer: {
@@ -32,6 +32,10 @@ const config: HardhatUserConfig = {
         enabled: true,
       },
     },
+    ganache: {
+      url: 'HTTP://127.0.0.1:7545',
+      accounts: [process.env.WALLET_SECRET || ''],
+    },
   },
   etherscan: {
     apiKey: {
@@ -44,7 +48,8 @@ const config: HardhatUserConfig = {
         urls: {
           // apiURL: 'https://rpc.buildbear.io/dual-carnage-effb3e55',
           apiURL: 'https://rpc.buildbear.io/liable-cannonball-812580a5',
-          browserURL: 'https://rpc.buildbear.io/liable-cannonball-812580a5/transactions',
+          browserURL:
+            'https://rpc.buildbear.io/liable-cannonball-812580a5/transactions',
         },
       },
     ],

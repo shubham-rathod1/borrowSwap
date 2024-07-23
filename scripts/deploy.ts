@@ -73,6 +73,8 @@ async function main() {
   await USDT.approve(controller.target, '300000000000000');
   await WBTC.approve(controller.target, '1000000000000000000000000');
 
+  console.log("compound borrow started")
+
   await controller.compoundBorrow({
     _supplyAsset: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
     _borrowAsset: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',

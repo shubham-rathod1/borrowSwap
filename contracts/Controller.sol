@@ -3,6 +3,7 @@ pragma solidity 0.8.20;
 
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 interface ILogic {
+    function initialize(address _controller) external;
     function compBorrow(
         address _supplyAsset,
         address _borrowAsset,
@@ -140,6 +141,7 @@ contract Controller {
                 revert(0, 0)
             } // Check creation status
         }
+        ILogic(contractAddress).initialize(address(this));
         proxyAddress[msg.sender] = contractAddress;
         emit AccountCreated(msg.sender, contractAddress);
         return contractAddress;
